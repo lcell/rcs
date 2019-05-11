@@ -24,6 +24,16 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
+		<!--swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
+
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-web-starter</artifactId>
@@ -32,6 +42,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 

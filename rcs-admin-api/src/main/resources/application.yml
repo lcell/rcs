@@ -4,6 +4,9 @@ spring:
   messages:
     encoding: UTF-8
 
+swagger:
+  enabled: true
+
 server:
   port: 8080
 
