@@ -1,4 +1,4 @@
-package com.liguang.rcs.admin.web;
+package com.liguang.rcs.admin.web.auth;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;

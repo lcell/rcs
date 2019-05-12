@@ -10,7 +10,7 @@ import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
 public class WebSessionManager extends DefaultWebSessionManager {
-    public static final String LOGIN_TOKEN_KEY = "X-Rcs-Admin-Token";
+    public static final String LOGIN_TOKEN_KEY = "X-RCS-Admin-Token";
     private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
 
     @Override
