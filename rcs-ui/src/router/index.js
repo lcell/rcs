@@ -74,33 +74,10 @@ export const constantRoutes = [
 export default new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: constantRoutes
 })
 
 export const asyncRouterMap = [
-  {
-    path: '/user',
-    component: Layout,
-    redirect: 'noredirect',
-    alwaysShow: true,
-    name: 'userManage',
-    meta: {
-      title: '用户管理',
-      icon: 'chart'
-    },
-    children: [
-      {
-        path: 'user',
-        component: () => import('@/views/user/user'),
-        name: 'user',
-        meta: {
-          perms: ['GET /admin/user/list'],
-          title: '用户列表',
-          noCache: true
-        }
-      }
-    ]
-  },
   {
     path: '/sys',
     component: Layout,
@@ -108,7 +85,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     name: 'systemManage',
     meta: {
-      title: "系统管理",
+      title: '系统管理',
       icon: 'chart'
     },
     children: [
@@ -117,7 +94,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/sys/log'),
         name: 'log',
         meta: {
-          perms:  ['GET /admin/admin/log'],
+          perms: ['GET /admin/admin/log'],
           title: '操作日志',
           noCache: true
         }
@@ -143,7 +120,7 @@ export const asyncRouterMap = [
         }
       }
     ]
-  } , {
+  }, {
     path: '/profile',
     component: Layout,
     redirect: 'noredirect',

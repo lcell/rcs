@@ -1,6 +1,6 @@
-import request from '@/utils/request';
+import request from '@/utils/request'
 
-export function loginByUsername (username, password) {
+export function loginByUsername(username, password) {
   const data = {
     username,
     password
@@ -11,8 +11,13 @@ export function loginByUsername (username, password) {
     data
   })
 }
-
-export function getUserInfo (token) {
+export function logout() {
+  return request({
+    url: '/auth/logout',
+    method: 'post'
+  })
+}
+export function getUserInfo(token) {
   return request({
     url: '/auth/info',
     method: 'get',
