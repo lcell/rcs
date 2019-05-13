@@ -24,7 +24,7 @@ import static com.liguang.rcs.admin.util.ResponseCode.USER_INVALID_ACCOUNT;
 @RestController
 @RequestMapping("/admin/profile")
 @Validated
-@Api(value = "用户设置API")
+@Api(tags = "用户设置API")
 public class ProfileController {
     private static final Log LOG = LogFactory.getLog(ProfileController.class);
 

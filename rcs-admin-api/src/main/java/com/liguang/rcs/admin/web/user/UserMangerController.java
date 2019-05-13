@@ -28,7 +28,7 @@ import static com.liguang.rcs.admin.util.ResponseCode.*;
 @RestController
 @RequestMapping("/admin/admin")
 @Validated
-@Api(value = "用户管理API")
+@Api(tags = "用户管理API")
 public class UserMangerController {
     private static final Log LOG = LogFactory.getLog(UserMangerController.class);
 
@@ -88,7 +88,7 @@ public class UserMangerController {
     }
 
     @RequiresPermissions("admin:admin:read")
-    @RequiresPermissionsDesc(menu={"系统管理" , "管理员管理"}, button="详情")
+    @RequiresPermissionsDesc(menu={"系统管理" , "用户管理"}, button="详情")
     @ApiOperation(value = "查询用户详情")
     @GetMapping("/read")
     public Object read(@NotNull Integer id) {
@@ -97,7 +97,7 @@ public class UserMangerController {
     }
 
     @RequiresPermissions("admin:admin:update")
-    @RequiresPermissionsDesc(menu={"系统管理" , "管理员管理"}, button="编辑")
+    @RequiresPermissionsDesc(menu={"系统管理" , "用户管理"}, button="编辑")
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/update")
     public Object update(@RequestBody RcsUser user) {
@@ -119,7 +119,7 @@ public class UserMangerController {
     }
 
     @RequiresPermissions("admin:admin:delete")
-    @RequiresPermissionsDesc(menu={"系统管理" , "管理员管理"}, button="删除")
+    @RequiresPermissionsDesc(menu={"系统管理" , "用户管理"}, button="删除")
     @ApiOperation(value = "删除用户")
     @PostMapping("/delete")
     public Object delete(@RequestBody RcsUser user) {

@@ -24,7 +24,7 @@ import Layout from '@/views/layout/Layout'
   }
  **/
 
-export const constantRoutes = [
+export const constantRouterMap = [
   {
     path: '/redirect',
     component: Layout,
@@ -74,7 +74,7 @@ export const constantRoutes = [
 export default new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRouterMap
 })
 
 export const asyncRouterMap = [

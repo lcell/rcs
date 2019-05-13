@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/dashboard")
 @Validated
-@Api(value = "报表展示API")
+@Api(tags = "报表展示API")
 public class DashBoardController {
     private static final Log LOG = LogFactory.getLog(DashBoardController.class);
     @GetMapping("")

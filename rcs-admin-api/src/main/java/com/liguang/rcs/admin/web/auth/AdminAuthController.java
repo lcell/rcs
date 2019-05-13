@@ -69,7 +69,6 @@ public class AdminAuthController {
         return ResponseUtil.ok(currentUser.getSession().getId());
     }
 
-    @RequiresAuthentication
     @PostMapping("/logout")
     @ApiOperation(value = "用户登出")
     public Object logout() {
@@ -78,7 +77,6 @@ public class AdminAuthController {
         return ResponseUtil.ok();
     }
 
-    @RequiresAuthentication
     @GetMapping("/info")
     @ApiOperation(value = "查询当前用户信息")
     public Object info() {

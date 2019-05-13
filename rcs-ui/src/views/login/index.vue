@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">管理员登录</h3>
+        <h3 class="title">理光风控系统</h3>
       </div>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
@@ -21,7 +21,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="request.jshandleLogin">登录</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div style="position:relative">
         <div class="tips">
@@ -37,7 +37,7 @@
 <script>
 export default {
   name: 'Login',
-  data () {
+  data() {
     const validateUsername = (rule, value, callback) => {
       if (validateUsername == null) {
         callback(new Error('请输入正确的管理员用户名'))
@@ -67,28 +67,28 @@ export default {
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler: function(route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
     }
 
   },
-  created () {
+  created() {
     // window.addEventListener('hashchange', this.afterQRScan)
   },
-  destroyed () {
+  destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)
   },
   methods: {
-    showPwd () {
+    showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
       } else {
         this.passwordType = 'password'
       }
     },
-    handleLogin () {
+    handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid && !this.loading) {
           this.loading = true

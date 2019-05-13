@@ -38,7 +38,7 @@ import static com.liguang.rcs.admin.util.ResponseCode.*;
 @RestController
 @RequestMapping("/admin/role")
 @Validated
-@Api(value = "角色管理API")
+@Api(tags = "角色管理API")
 public class RoleController {
     @Autowired
     private RcsRoleService roleService;

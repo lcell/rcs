@@ -24,7 +24,7 @@ import Layout from '@/views/layout/Layout'
   }
  **/
 
-export const constantRoutes = [
+export const constantRouterMap = [
   {
     path: '/redirect',
     component: Layout,
