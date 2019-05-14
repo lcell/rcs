@@ -89,7 +89,7 @@ export const asyncRouterMap = [
       icon: 'chart'
     },
     children: [
-      {
+      /** {
         path: 'log',
         component: () => import('@/views/sys/log'),
         name: 'log',
@@ -98,7 +98,7 @@ export const asyncRouterMap = [
           title: '操作日志',
           noCache: true
         }
-      },
+      },*/
       {
         path: 'user',
         component: () => import('@/views/sys/admin'),

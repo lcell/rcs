@@ -151,7 +151,7 @@ export default {
   computed: {
     headers() {
       return {
-        'X-Litemall-Admin-Token': getToken()
+        'X-RCS-Admin-Token': getToken()
       }
     }
   },
@@ -160,7 +160,7 @@ export default {
 
     roleOptions()
       .then(response => {
-        this.roleOptions = response.data.data
+        this.roleOptions = response.data.data.list
       })
   },
   methods: {
