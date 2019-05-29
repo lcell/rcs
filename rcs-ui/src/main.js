@@ -16,7 +16,7 @@ import store from './store'
 import './icons' // icon
 import './permission' // permission control
 
-import permission from '@/directive/permission/index.js' // 权限判断指令
+import permission from './directive/permission' // 权限判断指令
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

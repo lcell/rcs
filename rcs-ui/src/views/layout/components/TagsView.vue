@@ -12,12 +12,12 @@
         @click.middle.native="closeSelectedTag(tag)"
         @contextmenu.prevent.native="openMenu(tag,$event)">
         {{ tag.title }}
-        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+        <span v-if="tag.path !== '/dashboard'" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新</li>
-      <li @click="closeSelectedTag(selectedTag)">关闭</li>
+      <li v-if="selectedTag.path !== '/dashboard'" @click="closeSelectedTag(selectedTag)">关闭</li>
       <li @click="closeOthersTags">关闭其它</li>
       <li @click="closeAllTags">关闭所有</li>
     </ul>
@@ -130,7 +130,7 @@ export default {
       } else {
         this.left = left
       }
-      this.top = e.clientY
+      this.top = e.clientY - 45
 
       this.visible = true
       this.selectedTag = tag

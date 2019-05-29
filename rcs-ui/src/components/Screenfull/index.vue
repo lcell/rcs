@@ -1,6 +1,7 @@
 <template>
   <div>
     <svg
+      :style = "{fill : fill}"
       t="1508738709248"
       class="screenfull-svg"
       viewBox="0 0 1024 1024"

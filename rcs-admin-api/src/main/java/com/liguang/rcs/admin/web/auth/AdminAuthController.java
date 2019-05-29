@@ -82,7 +82,9 @@ public class AdminAuthController {
     public Object info() {
         Subject currentUser = SecurityUtils.getSubject();
         RcsUser user = (RcsUser) currentUser.getPrincipal();
-
+        if(user == null) {
+            return ResponseUtil.unlogin();
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("name", user.getUsername());
         data.put("avatar", user.getAvatar());

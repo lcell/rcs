@@ -1,9 +1,9 @@
 <template>
   <div :class="classObj" class="app-wrapper">
+    <app-header/>
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
     <sidebar class="sidebar-container"/>
     <div class="main-container">
-      <navbar/>
       <tags-view/>
       <app-main/>
     </div>
@@ -11,13 +11,13 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain, TagsView } from './components'
+import { AppHeader, Sidebar, AppMain, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
   name: 'Layout',
   components: {
-    Navbar,
+    AppHeader,
     Sidebar,
     AppMain,
     TagsView
@@ -52,8 +52,9 @@ export default {
   .app-wrapper {
     @include clearfix;
     position: relative;
-    height: 100%;
+    /*height: 100%;*/
     width: 100%;
+    top: 50px;
     &.mobile.openSidebar{
       position: fixed;
       top: 0;

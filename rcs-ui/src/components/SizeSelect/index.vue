@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" @command="handleSetSize">
     <div>
-      <svg-icon class-name="size-icon" icon-class="size" />
+      <svg-icon :style="{color:iconColor}" class-name="size-icon" icon-class="size"/>
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="size==='medium'" command="medium">Medium</el-dropdown-item>
@@ -13,6 +13,12 @@
 
 <script>
 export default {
+  props: {
+    iconColor: {
+      type: String,
+      default: '#000'
+    }
+  },
   computed: {
     size() {
       return this.$store.getters.size
