@@ -25,7 +25,7 @@ import java.util.List;
 
 import static com.liguang.rcs.admin.util.ResponseCode.*;
 
-@RestController
+//@RestController
 @RequestMapping("/admin/admin")
 @Validated
 @Api(tags = "用户管理API")

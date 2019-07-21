@@ -37,6 +37,8 @@ public class UserAuthorizingRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
+
+
         RcsUser user = (RcsUser) getAvailablePrincipal(principals);
         Integer[] roleIds = user.getRoleIds();
         Set<String> roles = roleService.queryByIds(roleIds);

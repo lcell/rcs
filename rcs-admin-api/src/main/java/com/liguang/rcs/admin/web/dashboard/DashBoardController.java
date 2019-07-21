@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * 提供图标展示面板
  */
-@RestController
+//@RestController
 @RequestMapping("/admin/dashboard")
 @Validated
 @Api(tags = "报表展示API")

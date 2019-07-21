@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.liguang.rcs.admin.util.ResponseCode.USER_INVALID_ACCOUNT;
 
-@RestController
+//@RestController
 @RequestMapping("/admin/profile")
 @Validated
 @Api(tags = "用户设置API")
