@@ -4,8 +4,8 @@ import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel("服务汇总")
+@ApiModel("客户应收服务费")
 @Getter
 @Setter
-public class Serviceummary extends TableCommonColumn {
+public class CustomCommissionReceivableVO extends TableCommonColumn {
 }

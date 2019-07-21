@@ -5,5 +5,5 @@ import lombok.Data;
 
 @ApiModel("硬件明细")
 @Data
-public class HardwareSummary extends TableCommonColumn {
+public class HardwareSummaryVO extends TableCommonColumn {
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("核销数据")
-public class WriteOffRecord {
+public class WriteOffRecordVO {
     @ApiModelProperty(value = "客户编号", dataType = "String")
     private String customId;
 

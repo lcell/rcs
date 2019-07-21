@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @ApiModel("硬件明细")
 @Data
-public class HardwareDetail extends TableCommonColumn {
+public class HardwareDetailVO extends TableCommonColumn {
     @ApiModelProperty(value = "销售名字", dataType = "String")
     private String salerName;
     @ApiModelProperty(value = "客户状态", dataType = "String")

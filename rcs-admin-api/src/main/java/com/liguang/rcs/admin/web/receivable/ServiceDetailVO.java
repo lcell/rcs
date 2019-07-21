@@ -6,7 +6,7 @@ import lombok.Data;
 
 @ApiModel("服务明细")
 @Data
-public class ServiceDetail extends TableCommonColumn {
+public class ServiceDetailVO extends TableCommonColumn {
     @ApiModelProperty(value = "销售名字", dataType = "String")
     private String salerName;
     @ApiModelProperty(value = "客户状态", dataType = "String")

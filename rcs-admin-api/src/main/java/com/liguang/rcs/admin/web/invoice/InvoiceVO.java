@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel("发票信息")
-public class InvoiceVo {
+public class InvoiceVO {
     @ApiModelProperty(value = "合同编号", dataType = "String", required = true)
     @NotNull(message = "发票编号不可为空")
     private String contractId;

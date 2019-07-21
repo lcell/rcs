@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("账户信息")
-public class Account {
+public class AccountVO {
     @ApiModelProperty(value = "账户编号", dataType = "String")
     private String id;
 

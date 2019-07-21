@@ -8,8 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @ApiModel("合同信息")
 public class ContractVO {
+
+    @ApiModelProperty(value = "合同ID", required = true, dataType = "String")
+    private String contractId;
     @ApiModelProperty(value = "合同编号", required = true, dataType = "String")
-    private String id;
+    private String contractNo;
     @ApiModelProperty(value = "客户编号", required = true, dataType = "String")
     private String customId;
     @ApiModelProperty(value = "客户名称", required = true, dataType = "String")

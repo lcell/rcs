@@ -6,7 +6,7 @@ import lombok.Data;
 
 @ApiModel("客户应收硬件分期")
 @Data
-public class CustomHWReceivable extends TableCommonColumn {
+public class CustomHWReceivableVO extends TableCommonColumn {
     @ApiModelProperty(value = "应收款合计",dataType = "String")
     private String receivablePaymentTotal;
     @ApiModelProperty(value = "实际到账金额",dataType = "String")

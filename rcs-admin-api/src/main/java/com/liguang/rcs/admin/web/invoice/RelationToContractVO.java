@@ -7,8 +7,8 @@ import lombok.Data;
 import java.util.List;
 @Data
 @ApiModel("发票关联合同参数")
-public class RelationToContractVo {
-    @ApiModelProperty(value = "合同编号", dataType = "String", required = true)
+public class RelationToContractVO {
+    @ApiModelProperty(value = "合同ID", dataType = "String", required = true)
     private String contractId;
     @ApiModelProperty(value = "发票编号", dataType = "List", required = true)
     private List<String> invoiceIds;
