@@ -10,6 +10,8 @@ import javax.persistence.Table;
 @Table(name = "rcs_account")
 @Data
 public class AccountEntity extends AbstractEntity {
+    @Column(name = "account_no", unique = true)
+    private String accountNo; //编号
     @Column(name = "name")
     private String name; //姓名
     @Column(name = "department")

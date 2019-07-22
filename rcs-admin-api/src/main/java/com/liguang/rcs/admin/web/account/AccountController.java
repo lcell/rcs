@@ -2,11 +2,13 @@ package com.liguang.rcs.admin.web.account;
 
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/rcs/account")
@@ -37,6 +39,13 @@ public class AccountController {
         //TODO
         return  ResponseObject.success(null);
 
+    }
+
+    @GetMapping("/queryByNo")
+    @ApiOperation("根据账户编号模糊查询账号")
+    public ResponseObject<List<AccountVO>> queryByNo(@RequestParam(name = "accountNo") String accountNo) {
+        //TODO
+        return null;
     }
 
 }
