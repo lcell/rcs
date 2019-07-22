@@ -9,7 +9,7 @@ import lombok.Data;
 public class QueryParams {
 
     @ApiModelProperty(value = "合同编号", dataType = "String")
-    private String contractId;
+    private String contractNo;
     @ApiModelProperty(value = "客户编号", dataType = "String")
     private String customId;
     @ApiModelProperty(value = "产品类型", dataType = "String")

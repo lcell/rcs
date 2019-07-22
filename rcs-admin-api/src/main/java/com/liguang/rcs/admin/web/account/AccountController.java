@@ -30,9 +30,9 @@ public class AccountController {
         return  ResponseObject.success(null);
     }
 
-    @GetMapping("/query")
+    @GetMapping("/query/{accountId}")
     @ApiOperation("查询信息")
-    public ResponseObject<AccountVO> query(@RequestParam(name = "accountId") String accountId) {
+    public ResponseObject<AccountVO> query(@PathVariable(name = "accountId") String accountId) {
 
         //TODO
         return  ResponseObject.success(null);

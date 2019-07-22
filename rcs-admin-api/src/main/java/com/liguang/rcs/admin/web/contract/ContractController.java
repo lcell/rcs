@@ -4,13 +4,7 @@ import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -21,6 +15,13 @@ public class ContractController  {
     @PostMapping("/query")
     @ApiOperation("查询合同列表")
     public ResponseObject<PageableBody<ContractVO>> query(@RequestBody QueryParams params) {
+        //TODO
+        return null;
+    }
+
+    @GetMapping("/queryById/{contractId}")
+    @ApiOperation("根据合同ID查询合同信息")
+    public ResponseObject<ContractVO> query(@PathVariable("contractId") String contractId) {
         //TODO
         return null;
     }

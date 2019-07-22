@@ -21,9 +21,9 @@ import javax.validation.Valid;
 public class WriteOffController {
 
 
-    @ApiOperation("通过合同编号查询核销结算记录")
+    @ApiOperation("通过合同ID查询核销结算记录")
     @ApiImplicitParams(
-            @ApiImplicitParam(name = "contractId", value = "合同编号", type = "String", required = true)
+            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
     )
     @GetMapping("/queryByContractId/{contractId}")
     public ResponseObject<WriteOffStatementsVO> queryByContractId(@PathVariable("contractId") String contractId) {
@@ -93,11 +93,11 @@ public class WriteOffController {
 
 
     @ApiOperation("导出服务费核销记录")
-    @GetMapping("/exportCommission/{contractId}")
+    @GetMapping("/exportCommission/{contractNo}")
     @ApiImplicitParams(
-            @ApiImplicitParam(name = "contractId", value = "合同编号", type = "String", required = true)
+            @ApiImplicitParam(name = "contractNo", value = "合同编号", type = "String", required = true)
     )
-    public ResponseObject exportCommission(@PathVariable(value = "contractId") String contractId) {
+    public ResponseObject exportCommission(@PathVariable(value = "contractNo") String contractNo) {
 
         //TODO
         return null;

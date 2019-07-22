@@ -33,13 +33,4 @@ public class InvoiceVO {
     @ApiModelProperty(value = "开票日期", required = true, dataType = "String")
     private String billingDate;
 
-    @ApiModelProperty(value = "首付款", dataType = "String")
-    private String firstPayment;
-
-    @ApiModelProperty(value = "余款", dataType = "String")
-    private String remainsAmount;
-
-    @ApiModelProperty(value = "期数", dataType = "String")
-    private String paymentNum;
-
 }
