@@ -23,4 +23,9 @@ spring:
       test-while-idle:  true
       time-between-eviction-runs-millis:  60000
       filters:  stat,wall
+  jpa:
+    database-platform : org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql : true
+    hibernate:
+      ddl-auto: none
 

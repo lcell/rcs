@@ -3,12 +3,14 @@ package com.liguang.rcs.admin.web.receivable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author gggg
  */
 @ApiModel("硬件明细")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class HardwareDetailVO extends TableCommonColumn {
     @ApiModelProperty(value = "销售名字", dataType = "String")
     private String salerName;

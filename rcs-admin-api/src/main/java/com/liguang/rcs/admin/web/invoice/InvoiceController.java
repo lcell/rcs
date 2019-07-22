@@ -26,7 +26,7 @@ public class InvoiceController {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "customId", value = "客户编号", type = "String")
     )
-    public ResponseObject<List<InvoiceVo>> queryByCompany(@PathVariable("companyId") String companyId) {
+    public ResponseObject<List<InvoiceVO>> queryByCompany(@PathVariable("customId") String customId) {
 
         //TODO
         return null;
@@ -58,7 +58,7 @@ public class InvoiceController {
     }
     @ApiOperation("将发票关联到合同上")
     @PostMapping("/relationToContract")
-    public ResponseObject<Void> relationContract(@Valid @RequestBody RelationToContractVo relationToContractVo) {
+    public ResponseObject<Void> relationContract(@Valid @RequestBody RelationToContractVO relationToContractVo) {
 
         //TODO
         return null;

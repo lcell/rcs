@@ -15,7 +15,6 @@ import org.springframework.context.annotation.DependsOn;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 @Configuration
 public class ShiroConfig {
     @Bean

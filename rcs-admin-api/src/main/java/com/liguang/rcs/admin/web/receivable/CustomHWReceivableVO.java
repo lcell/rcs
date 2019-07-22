@@ -3,9 +3,11 @@ package com.liguang.rcs.admin.web.receivable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @ApiModel("客户应收硬件分期")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class CustomHWReceivableVO extends TableCommonColumn {
     @ApiModelProperty(value = "应收款合计",dataType = "String")
     private String receivablePaymentTotal;

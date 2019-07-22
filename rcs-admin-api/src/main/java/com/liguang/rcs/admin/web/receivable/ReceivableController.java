@@ -19,13 +19,13 @@ public class ReceivableController {
 
     @PostMapping("/queryCustomHw")
     @ApiOperation("查询客户硬件分期")
-    public ResponseObject<List<CustomHWReceivable>> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param) {
+    public ResponseObject<List<CustomHWReceivableVO>> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param) {
         //TODO
         return null;
     }
     @PostMapping("/updateCustomHw/{contractId}")
     @ApiOperation("更新客户硬件分期")
-    public ResponseObject<List<CustomHWReceivable>> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param,
+    public ResponseObject<List<CustomHWReceivableVO>> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param,
                                                                   @PathVariable("contractId") String contractId) {
         //TODO
         return null;
@@ -33,13 +33,13 @@ public class ReceivableController {
 
     @PostMapping("/queryCustomCommission")
     @ApiOperation("查询客户服务费分期")
-    public ResponseObject<List<CustomHWReceivable>> queryCustomCommission(@Valid @RequestBody CustomQueryConditionParam param) {
+    public ResponseObject<List<CustomHWReceivableVO>> queryCustomCommission(@Valid @RequestBody CustomQueryConditionParam param) {
         return null;
     }
 
     @PostMapping("/updateCustomCommission/{contractId}")
     @ApiOperation("更新客户服务费分期")
-    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomHWReceivable customHWReceivable,
+    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomHWReceivableVO customHWReceivable,
                                                        @PathVariable("contractId") String contractId) {
         return null;
     }
@@ -47,21 +47,21 @@ public class ReceivableController {
 
     @PostMapping("/queryHwDetail")
     @ApiOperation("查询硬件明细")
-    public ResponseObject<List<HardwareDetail>> queryHwDetail(@Valid @RequestBody QuerySummaryParam param) {
+    public ResponseObject<List<HardwareDetailVO>> queryHwDetail(@Valid @RequestBody QuerySummaryParam param) {
         //TODO
         return null;
     }
 
     @PostMapping("/queryHwSummary")
     @ApiOperation("查询硬件汇总")
-    public ResponseObject<List<HardwareSummary>> queryHwSummary(@Valid @RequestBody QuerySummaryParam param) {
+    public ResponseObject<List<HardwareSummaryVO>> queryHwSummary(@Valid @RequestBody QuerySummaryParam param) {
         //TODO
         return null;
     }
 
     @PostMapping("/queryServiceDetail")
     @ApiOperation("查询服务明细")
-    public ResponseObject<List<ServiceDetail>> queryServiceDetail(@Valid @RequestBody QuerySummaryParam param) {
+    public ResponseObject<List<ServiceDetailVO>> queryServiceDetail(@Valid @RequestBody QuerySummaryParam param) {
 
         //TODO
         return null;
@@ -69,7 +69,7 @@ public class ReceivableController {
 
     @PostMapping("/queryServiceSummary")
     @ApiOperation("查询服务汇总")
-    public ResponseObject<List<Serviceummary>> queryServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
+    public ResponseObject<List<ServiceummaryVO>> queryServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
 
         //TODO
         return null;

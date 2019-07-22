@@ -1,22 +1,19 @@
 package com.liguang.rcs.admin.web.auth;
 
+import com.liguang.rcs.admin.common.response.ResponseObject;
+import com.liguang.rcs.admin.db.domain.AccountEntity;
 import com.liguang.rcs.admin.permission.Permission;
 import com.liguang.rcs.admin.permission.PermissionUtil;
+import com.liguang.rcs.admin.service.PermissionService;
+import com.liguang.rcs.admin.service.RoleService;
 import com.liguang.rcs.admin.util.ResponseUtil;
-import com.liguang.rcs.db.domain.RcsUser;
-import com.liguang.rcs.db.service.RcsPermissionService;
-import com.liguang.rcs.db.service.RcsRoleService;
-import com.liguang.rcs.db.service.RcsUserService;
+import com.liguang.rcs.admin.web.account.AccountVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -37,9 +34,10 @@ public class AdminAuthController {
     private static final Log LOG = LogFactory.getLog(AdminAuthController.class);
 
     @Autowired
-    private RcsRoleService roleService;
+    private RoleService roleService;
+
     @Autowired
-    private RcsPermissionService permissionService;
+    private PermissionService permissionService;
 
     @Autowired
     private ApplicationContext context;
@@ -52,21 +50,21 @@ public class AdminAuthController {
     public Object login(@RequestBody AuthLoginInput input) {
 
         if (StringUtils.isEmpty(input.getUsername()) || StringUtils.isEmpty(input.getPassword())) {
-            return ResponseUtil.badArgument();
+            return ResponseObject.badArgument();
         }
         Subject currentUser = SecurityUtils.getSubject();
         try {
             currentUser.login(new UsernamePasswordToken(input.getUsername(), input.getPassword()));
         } catch (UnknownAccountException uae) {
-            return ResponseUtil.fail(USER_INVALID_ACCOUNT, "用户帐号或密码不正确");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT, "用户帐号或密码不正确");
         } catch (LockedAccountException lae) {
-            return ResponseUtil.fail(USER_INVALID_ACCOUNT, "用户帐号已锁定不可用");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT, "用户帐号已锁定不可用");
 
         } catch (AuthenticationException ae) {
-            return ResponseUtil.fail(USER_INVALID_ACCOUNT, "认证失败");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT, "认证失败");
         }
         currentUser = SecurityUtils.getSubject();
-        return ResponseUtil.ok(currentUser.getSession().getId());
+        return ResponseObject.success(currentUser.getSession().getId());
     }
 
     @PostMapping("/logout")
@@ -74,29 +72,18 @@ public class AdminAuthController {
     public Object logout() {
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
-        return ResponseUtil.ok();
+        return ResponseObject.success();
     }
 
     @GetMapping("/info")
     @ApiOperation(value = "查询当前用户信息")
     public Object info() {
         Subject currentUser = SecurityUtils.getSubject();
-        RcsUser user = (RcsUser) currentUser.getPrincipal();
+        AccountEntity user = (AccountEntity)currentUser.getPrincipal();
         if(user == null) {
-            return ResponseUtil.unlogin();
+            return ResponseObject.unlogin();
         }
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", user.getUsername());
-        data.put("avatar", user.getAvatar());
-
-        Integer[] roleIds = user.getRoleIds();
-        Set<String> roles = roleService.queryByIds(roleIds);
-        Set<String> permissions = permissionService.queryByRoleIds(roleIds);
-        data.put("roles", roles);
-        // NOTE
-        // 这里需要转换perms结构，因为对于前端而已API形式的权限更容易理解
-        data.put("perms", toAPI(permissions));
-        return ResponseUtil.ok(data);
+        return ResponseUtil.ok(new AccountVO(user));
     }
 
     //返回当前用户的权限值

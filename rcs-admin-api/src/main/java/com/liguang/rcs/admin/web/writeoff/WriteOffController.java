@@ -26,7 +26,7 @@ public class WriteOffController {
             @ApiImplicitParam(name = "contractId", value = "合同编号", type = "String", required = true)
     )
     @GetMapping("/queryByContractId/{contractId}")
-    public ResponseObject<WriteOffStatementsVo> queryByContractId(@PathVariable("contractId") String contractId) {
+    public ResponseObject<WriteOffStatementsVO> queryByContractId(@PathVariable("contractId") String contractId) {
 
         //TODO
         return null;
@@ -44,7 +44,7 @@ public class WriteOffController {
 
     @ApiOperation("更新核销结算记录")
     @PostMapping("/update")
-    public ResponseObject<Void> update(@Valid  @RequestBody  WriteOffStatementsVo writeOffStatementsVo) {
+    public ResponseObject<Void> update(@Valid  @RequestBody  WriteOffStatementsVO writeOffStatementsVo) {
 
         //TODO
         return null;
@@ -67,7 +67,7 @@ public class WriteOffController {
             @ApiImplicitParam(name = "contractId", value = "合同编号", type = "String", required = true)
     )
     @GetMapping("/queryCommissionByContractId/{contractId}")
-    public ResponseObject<CommissionFeeStatementVo> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
+    public ResponseObject<CommissionFeeStatementVO> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
 
         //TODO
         return null;
@@ -85,7 +85,7 @@ public class WriteOffController {
 
     @ApiOperation("更新服务费核销结算记录")
     @PostMapping("/updateCommission")
-    public ResponseObject<Void> updateCommission(@Valid  @RequestBody  CommissionFeeStatementVo writeOffStatementsVo) {
+    public ResponseObject<Void> updateCommission(@Valid  @RequestBody  CommissionFeeStatementVO writeOffStatementsVo) {
 
         //TODO
         return null;

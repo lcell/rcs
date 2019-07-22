@@ -18,6 +18,13 @@ public class ResponseObject<T> {
         ResponseObject<T> response = new ResponseObject<>();
         response.setBody(body);
         response.setCode(0);
+        response.setErrMsg("success");
+        return response;
+    }
+    public static <T> ResponseObject<T> success() {
+        ResponseObject<T> response = new ResponseObject<>();
+        response.setCode(0);
+        response.setErrMsg("success");
         return response;
     }
 
