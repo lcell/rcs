@@ -2,11 +2,9 @@ package com.liguang.rcs.admin.web.writeoff;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
-@Data
-@ApiModel("核销数据")
-public class WriteOffRecordVO {
+@ApiModel("增加核销记录")
+public class AddWriteOffParam {
     @ApiModelProperty(value = "客户编号", dataType = "String")
     private String customId;
 
@@ -19,7 +17,9 @@ public class WriteOffRecordVO {
     @ApiModelProperty(value = "实际收款金额", dataType = "String")
     private String actualPayAmount;
 
-    @ApiModelProperty(value = "是否关联，0-未关联，1-已关联", dataType = "String")
-    private String status;
+    @ApiModelProperty(value = "关联的合同ID", dataType = "String")
+    private String contractId;
 
+    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
+    private String type;
 }

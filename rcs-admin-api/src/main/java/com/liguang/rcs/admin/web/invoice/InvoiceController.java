@@ -72,6 +72,7 @@ public class InvoiceController {
     @PostMapping("/relationToContract")
     public ResponseObject<Void> relationContract(@Valid @RequestBody RelationToContractVO relationToContractVo) {
 
+        //
         //TODO
         return null;
     }
