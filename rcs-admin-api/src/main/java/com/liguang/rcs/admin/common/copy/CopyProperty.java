@@ -16,6 +16,13 @@ public @interface CopyProperty {
     //如果为空是否去覆盖，默认不会去将null赋值给目的对象,防止覆盖掉缺省值
     boolean ignoreNull() default true;
 
+    /**
+     * 额外辅助字符
+     */
     String extMsg() default "";
 
+    /**
+     * 额外辅助类信息
+     */
+    Class extClass() default Object.class;
 }

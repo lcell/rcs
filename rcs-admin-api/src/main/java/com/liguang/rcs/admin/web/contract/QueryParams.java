@@ -16,13 +16,13 @@ public class QueryParams {
     private String productType;
     @ApiModelProperty(value = "合同类型", dataType = "String")
     private String contractType;
-    @ApiModelProperty(value = "生效开始日期", dataType = "String")
+    @ApiModelProperty(value = "生效开始日期, yyyy-MM-dd", dataType = "String")
     private String startDate;
-    @ApiModelProperty(value = "生效结束日期", dataType = "String")
+    @ApiModelProperty(value = "生效结束日期, yyyy-MM-dd", dataType = "String")
     private String endDate;
 
-    @ApiModelProperty("当前页面")
-    private String currentPage;
-    @ApiModelProperty("页面数据条数")
-    private String pageSize;
+    @ApiModelProperty(value = "当前页面", dataType = "int")
+    private int currentPage = 1;
+    @ApiModelProperty(value = "页面数据条数", dataType = "int")
+    private int pageSize = 20;
 }

@@ -1,5 +1,8 @@
 package com.liguang.rcs.admin.util;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class NumericUtils {
 
     /**
@@ -15,6 +18,7 @@ public class NumericUtils {
         try {
             return Long.parseLong(value);
         } catch (Exception ex) {
+            log.warn("convert to Long Exception, value:{}", value);
             return defaultVal;
         }
     }
@@ -27,6 +31,7 @@ public class NumericUtils {
         try {
             return Double.parseDouble(source);
         } catch (Exception ex) {
+            log.warn("convert to Double Exception, value:{}", source);
             return defaultVal;
         }
     }
@@ -39,6 +44,20 @@ public class NumericUtils {
         try {
             return Integer.parseInt(value);
         } catch (Exception ex) {
+            log.warn("convert to Integer Exception, value:{}", value);
+            return defaultVal;
+        }
+    }
+
+    public static Float toFloat(String source) {
+        return toFloat(source, null);
+    }
+
+    private static Float toFloat(String source, Float defaultVal) {
+        try {
+            return Float.parseFloat(source);
+        } catch (Exception ex) {
+            log.warn("convert to Float Exception, value:{}", source);
             return defaultVal;
         }
     }

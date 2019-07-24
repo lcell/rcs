@@ -1,5 +1,6 @@
 package com.liguang.rcs.admin.web.contract;
 
+import com.google.common.base.Strings;
 import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.service.ContractService;
@@ -9,8 +10,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +30,12 @@ public class ContractController  {
     @ApiOperation("查询合同列表")
     public ResponseObject<PageableBody<ContractVO>> query(@RequestBody QueryParams params) {
         //check
-        //TODO
-        contractService.query(params);
-        return null;
+        if (params == null) {
+            log.warn("[Contract] params can't be null.");
+            return ResponseObject.badArgument();
+        }
+
+        return ResponseObject.success(contractService.query(params));
     }
 
     @GetMapping("/queryById/{contractId}")
@@ -41,7 +45,7 @@ public class ContractController  {
     )
     public ResponseObject<ContractVO> query(@PathVariable("contractId") String contractId) {
         Long contractIdLong = null;
-        if (Strings.isEmpty(contractId) || (contractIdLong = NumericUtils.toLong(contractId)) == null) {
+        if (Strings.isNullOrEmpty(contractId) || (contractIdLong = NumericUtils.toLong(contractId)) == null) {
             log.warn("[Contract] contract ID can't be empty.");
             return ResponseObject.badArgumentValue();
         }
@@ -78,8 +82,17 @@ public class ContractController  {
 
     @ApiOperation("查看合同文件")
     @GetMapping("/getContractFile/{id}")
-    public void getContractFile(ServletServerHttpResponse response, @RequestParam("id") String id) {
-        //TODO
+    public ResponseEntity getContractFile(ServletServerHttpResponse response, @RequestParam("id") String id) {
+        try {
+            Long contractId = NumericUtils.toLong(id);
+            if (contractId == null) {
+                log.warn("[Contract] contract must be long type, contractId:{}", id);
+                return ResponseEntity.notFound().build();
+            }
+            return contractService.downloadFile(contractId);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body("Inner Err, System is down.");
+        }
     }
 
 }

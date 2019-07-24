@@ -1,11 +1,16 @@
 package com.liguang.rcs.admin.common.enumeration.converter;
 
-import com.liguang.rcs.admin.common.copy.TypeConverter;
 import com.liguang.rcs.admin.common.enumeration.IEnum;
 
-public class IEnumToStringConverter<T extends IEnum> implements TypeConverter<T, String> {
+public class IEnumToStringConverter<T extends IEnum> extends AbstractIEnmuStringConverter<T, String> {
+
     @Override
-    public String convert(T source, String extMsg) {
-        return source.getCode();
+    public String convert(T source, String extMsg, Class extClass) {
+        return ienumToString(source);
+    }
+
+    @Override
+    public T reverseConvert(String target, String extMsg, Class extClass) {
+        return stringToIEnum(target, extClass);
     }
 }
