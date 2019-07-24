@@ -1,6 +1,6 @@
 package com.liguang.rcs.admin.common.enumeration;
 
-public enum WriteOffSourceEnum {
+public enum WriteOffSourceEnum  implements IEnum {
     //从系统同步过来
     ADVANCE_SYS("0"),
     //手工校对
@@ -11,6 +11,7 @@ public enum WriteOffSourceEnum {
         this.code = code;
     }
 
+    @Override
     public String getCode() {
         return code;
     }

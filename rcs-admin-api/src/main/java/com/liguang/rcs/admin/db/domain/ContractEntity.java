@@ -29,7 +29,7 @@ public class ContractEntity extends  AbstractEntity {
     @Column(name = "contract_status")
     private ContractStatusEnum status; //合同状态0-normal 1-legal 2-3rd party
     @Column(name = "contract_name")
-    private String contactName; //合同名称
+    private String contactName; //联系人名称
     @Column(name = "custom_tel")
     private String tel; //客户联系方式
     @Column(name = "custom_email")
@@ -37,11 +37,11 @@ public class ContractEntity extends  AbstractEntity {
     @Column(name = "product_type")
     private ProductTypeEnum productType;//产品类型
     @Column(name = "receivable_num")
-    private String receivableNum;//应收期数
+    private Integer receivableNum;//应收期数
     @Column(name = "first_payment")
-    private String firstPayment;//首付
+    private Double firstPayment;//首付
     @Column(name = "period_payment")
-    private String periodPayment;// 每期付款
+    private Double periodPayment;// 每期付款
     @Column(name = "file_path")
     private String filePath; //合同路径
 }

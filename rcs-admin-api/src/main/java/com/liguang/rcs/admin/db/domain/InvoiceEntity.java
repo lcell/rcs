@@ -1,5 +1,6 @@
 package com.liguang.rcs.admin.db.domain;
 
+import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -32,10 +33,11 @@ public class InvoiceEntity extends AbstractEntity {
 
     @Column(name = "billing_date")
     private Timestamp billingDate; //开票日期
-
     @Column(name = "contract_id")
     private int contractId; // 发票所关联的合同ID, 外键
     @Column(name = "contract_no")
     private String contractNo;//发票所关联的合同编号
+    @Column(name = "write_off_type")
+    private WriteOffTypeEnum writeOffType; //发票核销类型
 
 }

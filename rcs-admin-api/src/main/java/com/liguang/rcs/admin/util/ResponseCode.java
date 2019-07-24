@@ -13,4 +13,8 @@ public class ResponseCode {
     public static final Integer ROLE_NAME_EXIST = 610;
     public static final Integer ROLE_SUPER_SUPERMISSION = 611;
     public static final Integer ROLE_USER_EXIST = 612;
+
+
+    //系统错误
+    public static final Integer INNER_ERROR_CODE = 500;
 }

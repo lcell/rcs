@@ -43,6 +43,9 @@ public class ResponseObject<T> {
         return fail(402, "参数值不对");
     }
 
+    public static <T> ResponseObject<T> dataNotExist() {
+        return fail(404, "数据不存在");
+    }
     public static <T> ResponseObject<T> unlogin() {
         return fail(501, "请登录");
     }
