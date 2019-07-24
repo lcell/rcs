@@ -32,4 +32,7 @@ public class TableCommonColumn {
 //    @ApiModelProperty(value = "本期净值", dataType = "String")
 //    private String netWorth;
 
+    @ApiModelProperty(value = "是否是手动核实到账数据", dataType = "Boolean")
+    private boolean isUnappliedCash;
+
 }
