@@ -19,6 +19,6 @@ public class QuerySummaryParam {
     private String beginDate;
     @ApiModelProperty(value = "结束时间", dataType = "String")
     private String endDate;
-    @ApiModelProperty(value = "操作者类型, 0-销售， 1-团队 2-PP业务", dataType = "String")
-    private String operatorType;
+//    @ApiModelProperty(value = "操作者类型, 0-销售， 1-团队 2-PP业务", dataType = "String")
+//    private String operatorType;
 }
