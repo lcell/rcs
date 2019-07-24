@@ -20,5 +20,7 @@ public class HardwareDetailVO extends TableCommonColumn {
     private String customName;
     @ApiModelProperty(value = "应收款合计", dataType = "String")
     private String receivableTotal;
+    @ApiModelProperty(value = "Action Plan: 0-结清 1-正常 2-催款函+利息 4-停服+法务催款函 5-第三方/诉讼", dataType = "String")
+    private String actionPlan;
 
 }

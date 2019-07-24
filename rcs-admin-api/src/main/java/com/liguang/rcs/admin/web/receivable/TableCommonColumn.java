@@ -29,7 +29,7 @@ public class TableCommonColumn {
     private String day_lt_90_ratio;
     @ApiModelProperty(value = "本期合计", dataType = "String")
     private String total;
-    @ApiModelProperty(value = "本期净值", dataType = "String")
-    private String netWorth;
+//    @ApiModelProperty(value = "本期净值", dataType = "String")
+//    private String netWorth;
 
 }
