@@ -20,5 +20,5 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
             "where id in (?4) and contract_id = ?1 and contract_no = ?2 and write_off_type = ?3", nativeQuery = true)
     void unRelationToContract(long contractId, String contractNo, String code, List<Long> invoiceIds);
 
-    List<InvoiceEntity> findBycontractIdAndwriteOffTypeOrderByBillingDateDesc(Long contractId, WriteOffTypeEnum type);
+    List<InvoiceEntity> findByContractIdAndWriteOffTypeOrderByBillingDateDesc(Long contractId, WriteOffTypeEnum type);
 }

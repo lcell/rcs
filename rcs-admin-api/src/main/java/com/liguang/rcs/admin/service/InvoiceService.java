@@ -66,7 +66,7 @@ public class InvoiceService {
     }
 
     public List<InvoiceEntity> queryRelatedEntityList(Long contractId, WriteOffTypeEnum type) {
-        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findBycontractIdAndwriteOffTypeOrderByBillingDateDesc(contractId, type);
+        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findByContractIdAndWriteOffTypeOrderByBillingDateDesc(contractId, type);
         if (invoiceEntityLst == null || invoiceEntityLst.isEmpty()) {
             return Collections.emptyList();
         }

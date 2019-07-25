@@ -20,8 +20,8 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
+@Service
 public class WriteOffService {
 
     @Autowired
