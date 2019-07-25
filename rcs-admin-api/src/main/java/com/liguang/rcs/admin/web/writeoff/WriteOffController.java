@@ -52,7 +52,12 @@ public class WriteOffController {
         }
         //TODO
 
-        return ResponseObject.success(writeOffService.querySettlement(contract, WriteOffTypeEnum.HARDWARE));
+        try {
+            return ResponseObject.success(writeOffService.querySettlement(contract, WriteOffTypeEnum.HARDWARE));
+        } catch (BaseException e) {
+            e.printStackTrace();
+            return ResponseObject.fail(e.getCode(), e.getMessage());
+        }
     }
 
     @ApiOperation("根据客户ID和合同生效时间查看核销记录列表")
