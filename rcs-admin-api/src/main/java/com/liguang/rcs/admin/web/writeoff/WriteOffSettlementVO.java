@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("核销结算")
-public class WriteOffStatementsVO {
+public class WriteOffSettlementVO {
     @ApiModelProperty(value = "月份", dataType = "String")
     private String payMonth;
     @ApiModelProperty(value = "每期计划收款", dataType = "String")

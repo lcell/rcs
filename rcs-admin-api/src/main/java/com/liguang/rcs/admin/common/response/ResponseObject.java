@@ -1,14 +1,17 @@
 package com.liguang.rcs.admin.common.response;
 
+import com.liguang.rcs.admin.util.ResponseCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import static com.liguang.rcs.admin.util.ResponseCode.*;
 
 @Data
 @ApiModel(value = "请求响应报文体")
 public class ResponseObject<T> {
     @ApiModelProperty(value = "响应码", dataType = "String")
-    private int code;
+    private String code;
     @ApiModelProperty(value = "错误消息，存在错误是有值", dataType = "String")
     private String errMsg;
     @ApiModelProperty("响应报文")
@@ -17,57 +20,72 @@ public class ResponseObject<T> {
     public static <T> ResponseObject<T> success(T body) {
         ResponseObject<T> response = new ResponseObject<>();
         response.setBody(body);
-        response.setCode(0);
+        response.setCode("0");
         response.setErrMsg("success");
         return response;
     }
     public static <T> ResponseObject<T> success() {
         ResponseObject<T> response = new ResponseObject<>();
-        response.setCode(0);
+        response.setCode("0");
         response.setErrMsg("success");
         return response;
     }
 
-    public static <T> ResponseObject<T> fail(int code, String errMsg) {
+    public static <T> ResponseObject<T> fail(String code, String errMsg) {
         ResponseObject<T> response = new ResponseObject<>();
         response.setCode(code);
         response.setErrMsg(errMsg);
         return response;
     }
 
+
+    public static <T> ResponseObject<T> fail(ResponseCode code) {
+        ResponseObject<T> response = new ResponseObject<>();
+        response.setCode(code.getCode());
+        response.setErrMsg(code.getMsg());
+        return response;
+    }
+
+    public static <T> ResponseObject<T> fail(ResponseCode code, String message) {
+        ResponseObject<T> response = new ResponseObject<>();
+        response.setCode(code.getCode());
+        response.setErrMsg(message);
+        return response;
+    }
+
     public static <T> ResponseObject<T> badArgument() {
-        return fail(401, "参数不对");
+        return fail(BAD_ARGUMENT);
     }
 
     public static <T> ResponseObject<T> badArgumentValue() {
-        return fail(402, "参数值不对");
+        return fail(BAD_ARGUMENT_VALUE);
     }
 
     public static <T> ResponseObject<T> dataNotExist() {
-        return fail(404, "数据不存在");
+        return fail(NOT_EXIST);
     }
     public static <T> ResponseObject<T> unlogin() {
-        return fail(501, "请登录");
+        return fail(UN_LOGIN);
     }
 
     public static <T> ResponseObject<T> serious() {
-        return fail(502, "系统内部错误");
+        return fail(SYS_INNER_ERR);
     }
 
     public static <T> ResponseObject<T> unsupport() {
-        return fail(503, "业务不支持");
+        return fail(NOT_SUPPORT);
     }
 
     public static <T> ResponseObject<T> updatedDateExpired() {
-        return fail(504, "更新数据已经失效");
+        return fail(UPDATED_DATA_EXPIRED);
     }
 
     public static <T> ResponseObject<T> updatedDataFailed() {
-        return fail(505, "更新数据失败");
+        return fail(UPDATED_DATA_FAILED);
     }
 
     public static <T> ResponseObject<T> unauthz() {
-        return fail(506, "无操作权限");
+        return fail(NO_PERMISSION);
     }
 
 }

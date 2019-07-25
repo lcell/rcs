@@ -49,7 +49,7 @@ public class ContractVO {
     private String totalAmount;
 
     @ApiModelProperty(value = "合同生效日期 yyyyMMdd", required = true, dataType = "String")
-    @CopyProperty(targetField = "status", typeCovertClass = StringToTimestampConverter.class, extMsg = "yyyyMMdd")
+    @CopyProperty(targetField = "effectiveDate", typeCovertClass = StringToTimestampConverter.class, extMsg = "yyyyMMdd")
     @NotNull(message = "合同生效日期不可为空")
     private String effectiveDate;
 

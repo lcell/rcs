@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("服务费核销结算")
-public class CommissionFeeStatementVO {
+public class CommissionFeeSettlementVO {
 
     @ApiModelProperty(value = "核销结算记录编号", dataType = "String")
     private String id;

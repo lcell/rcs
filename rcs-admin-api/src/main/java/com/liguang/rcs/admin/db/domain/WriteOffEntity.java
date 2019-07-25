@@ -25,6 +25,8 @@ public class WriteOffEntity extends AbstractEntity {
     private String paymentAmount; //支付金额
     @Column(name = "ref_contract_id")
     private Long refContractId; //关联的合同ID
+    @Column(name = "ref_contract_no")
+    private Long refContractNo; //关联的合同编号
     @Column(name = "source")
     private WriteOffSourceEnum source; //来源
     @Column(name = "type")

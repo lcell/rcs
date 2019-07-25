@@ -1,17 +1,13 @@
 package com.liguang.rcs.admin.web.invoice;
 
 import com.google.common.base.Strings;
-import com.liguang.rcs.admin.common.Constant;
 import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.service.InvoiceService;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.EnumUtils;
-import com.liguang.rcs.admin.util.ResponseCode;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.liguang.rcs.admin.util.NumericUtils;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +50,25 @@ public class InvoiceController {
         }
     }
 
+    @ApiModelProperty("根据合同编号和类型查询已关联的发票列表")
+    @GetMapping("/queryRelatedInvoice")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contractId")
+    })
+    public ResponseObject<List<InvoiceVO>> queryRelatedInvoice(@RequestParam("contractId") String contractId,
+                                                               @RequestParam("type") String type) {
+        Long contractIdLong = null;
+        WriteOffTypeEnum writeOffType = null;
+        if((contractIdLong = NumericUtils.toLong(contractId)) == null
+                || (writeOffType = EnumUtils.findByCode(WriteOffTypeEnum.values(), type) ) == null) {
+            log.error("[Invoice] param is invalid, contractId:{}, type:{}", contractId, type);
+            return ResponseObject.badArgumentValue();
+        }
+
+        return ResponseObject.success(invoiceService.queryRelatedList(contractIdLong, writeOffType));
+
+    }
+
 
     @ApiOperation("根据客户编号进行同步发票")
     @PostMapping("/sync/{customId}")
@@ -63,7 +78,7 @@ public class InvoiceController {
     public ResponseObject<Void> sync(@PathVariable String customId) {
 
         //TODO
-        return null;
+        return ResponseObject.success();
     }
     @ApiOperation("将发票关联到合同上")
     @PostMapping("/relationToContract")
@@ -80,6 +95,28 @@ public class InvoiceController {
         try {
             List<Long> invoiceIds = input.getInvoiceIds().stream().map(Long::parseLong).collect(Collectors.toList());
             invoiceService.relationToContract(Long.parseLong(input.getContractId()), invoiceIds, writeOffType);
+            return ResponseObject.success();
+        } catch (Exception ex) {
+            log.error("[Invoice] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
+    }
+
+    @ApiOperation("取消关联发票到合同上")
+    @PostMapping("/unRelationToContract")
+    public ResponseObject unRelationToContract(@Valid @RequestBody RelationToContractVO input) {
+        //check
+        WriteOffTypeEnum writeOffType = null;
+        if (input == null
+                || Strings.isNullOrEmpty(input.getContractId())
+                || input.getInvoiceIds() == null || input.getInvoiceIds().isEmpty()
+                || (writeOffType = EnumUtils.findByCode(WriteOffTypeEnum.values(), input.getType())) == null) {
+            log.error("[Invoice] input is invalid, input:{}", input);
+            return ResponseObject.badArgumentValue();
+        }
+        try {
+            List<Long> invoiceIds = input.getInvoiceIds().stream().map(Long::parseLong).collect(Collectors.toList());
+            invoiceService.unRelationToContract(Long.parseLong(input.getContractId()), invoiceIds, writeOffType);
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[Invoice] Inner Err, Exception:{}", ex);

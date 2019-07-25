@@ -44,4 +44,5 @@ public class ContractEntity extends  AbstractEntity {
     private Double periodPayment;// 每期付款
     @Column(name = "file_path")
     private String filePath; //合同路径
+
 }

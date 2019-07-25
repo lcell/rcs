@@ -56,12 +56,12 @@ public class AdminAuthController {
         try {
             currentUser.login(new UsernamePasswordToken(input.getUsername(), input.getPassword()));
         } catch (UnknownAccountException uae) {
-            return ResponseObject.fail(USER_INVALID_ACCOUNT, "用户帐号或密码不正确");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "用户帐号或密码不正确");
         } catch (LockedAccountException lae) {
-            return ResponseObject.fail(USER_INVALID_ACCOUNT, "用户帐号已锁定不可用");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "用户帐号已锁定不可用");
 
         } catch (AuthenticationException ae) {
-            return ResponseObject.fail(USER_INVALID_ACCOUNT, "认证失败");
+            return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "认证失败");
         }
         currentUser = SecurityUtils.getSubject();
         return ResponseObject.success(currentUser.getSession().getId());
@@ -90,7 +90,7 @@ public class AdminAuthController {
     private Object toAPI(Set<String> permissions) {
         if (systemPermissionsMap == null) {
             systemPermissionsMap = new HashMap<>();
-            final String basicPackage = "com.liguang.rcs.admin";
+            final String basicPackage = "com.liguang.rcs.admin.web";
             List<Permission> systemPermissions = PermissionUtil.listPermission(context, basicPackage);
             for (Permission permission : systemPermissions) {
                 String perm = permission.getRequiresPermissions().value()[0];
