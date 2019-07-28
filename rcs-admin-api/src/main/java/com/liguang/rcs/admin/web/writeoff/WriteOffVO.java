@@ -5,6 +5,8 @@ import com.liguang.rcs.admin.common.copy.CopyProperty;
 import com.liguang.rcs.admin.common.copy.EnableCopyProperties;
 import com.liguang.rcs.admin.common.copy.converter.StringToNumberConverter;
 import com.liguang.rcs.admin.common.copy.converter.StringToTimestampConverter;
+import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
+import com.liguang.rcs.admin.common.enumeration.converter.StringToIEnumConverter;
 import com.liguang.rcs.admin.db.domain.WriteOffEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @EnableCopyProperties
 @Slf4j
 public class WriteOffVO {
+
     @ApiModelProperty(value = "客户编号", dataType = "String", required = true)
     @NotNull(message = "客户ID不可为空")
     @CopyProperty(targetField = "customId")
@@ -38,8 +41,17 @@ public class WriteOffVO {
     @NotNull(message = "实际收款金额不可为空")
     private String actualPayAmount;
 
-//    @ApiModelProperty(value = "关联的合同ID", dataType = "String")
-//    private String contractId;
+    @ApiModelProperty(value = "核销结算ID，区分不同核销条目")
+    @CopyProperty(targetField = "settlementId")
+    private String settlementId;
+
+    @ApiModelProperty(value = "关联的合同ID", dataType = "String")
+    @CopyProperty(targetField = "contractId", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
+    private String contractId;
+
+    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
+    @CopyProperty(targetField = "type", typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
+    private String type;
 //
 //    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
 //    private String type;

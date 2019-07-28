@@ -8,31 +8,28 @@ import lombok.Data;
 @Data
 public class TableCommonColumn {
     @ApiModelProperty(value = "期数", dataType = "String")
-    private String nper;
-    @ApiModelProperty(value = "未逾期金额", dataType = "String")
-    private String unOverdueAmount;
-    @ApiModelProperty(value = "1~30天", dataType = "String")
-    private String day1_30;
-    @ApiModelProperty(value = "31～60天", dataType = "String")
-    private String day31_60;
-    @ApiModelProperty(value = "61～90天", dataType = "String")
-    private String day61_90;
-    @ApiModelProperty(value = "91～180天", dataType = "String")
-    private String day91_180;
-    @ApiModelProperty(value = "181～365天", dataType = "String")
-    private String day181_365;
-    @ApiModelProperty(value = ">365天", dataType = "String")
-    private String day_lt_365;
-    @ApiModelProperty(value = ">90合计", dataType = "String")
-    private String day_lt_90_total;
-    @ApiModelProperty(value = ">90占比", dataType = "String")
-    private String day_lt_90_ratio;
-    @ApiModelProperty(value = "本期合计", dataType = "String")
-    private String total;
-//    @ApiModelProperty(value = "本期净值", dataType = "String")
-//    private String netWorth;
-
-    @ApiModelProperty(value = "是否是手动核实到账数据", dataType = "Boolean")
-    private boolean isUnappliedCash;
+    private String nPer;
+    @ApiModelProperty(value = "未逾期金额", dataType = "Double")
+    private Double unOverdueAmount;
+    @ApiModelProperty(value = "1~30天", dataType = "Double")
+    private Double day1_30;
+    @ApiModelProperty(value = "31～60天", dataType = "Double")
+    private Double day31_60;
+    @ApiModelProperty(value = "61～90天", dataType = "Double")
+    private Double day61_90;
+    @ApiModelProperty(value = "91～180天", dataType = "Double")
+    private Double day91_180;
+    @ApiModelProperty(value = "181～365天", dataType = "Double")
+    private Double day181_365;
+    @ApiModelProperty(value = ">365天", dataType = "Double")
+    private Double day_lt_365;
+    @ApiModelProperty(value = ">90合计", dataType = "Double")
+    private Double day_lt_90_total;
+    @ApiModelProperty(value = ">90占比", dataType = "Double")
+    private Double day_lt_90_ratio;
+    @ApiModelProperty(value = "逾期总额", dataType = "Double")
+    private Double overdueTotal;
+    @ApiModelProperty(value = "本期合计, 实际支付 + 逾期 + 未逾期", dataType = "Double")
+    private Double total;
 
 }

@@ -20,13 +20,15 @@ public class WriteOffEntity extends AbstractEntity {
     @Column(name = "custom_name")
     private String customName; //客户名称
     @Column(name = "payment_date")
-    private Timestamp paymentDate; //支付日期
+    private Timestamp paymentDate; //支付日期 不可为空
     @Column(name = "payment_amount")
-    private String paymentAmount; //支付金额
+    private Double paymentAmount; //支付金额 不可为空
     @Column(name = "ref_contract_id")
     private Long refContractId; //关联的合同ID
-    @Column(name = "ref_contract_no")
-    private Long refContractNo; //关联的合同编号
+//    @Column(name = "ref_contract_no")
+//    private Long refContractNo; //关联的合同编号
+    @Column(name = "settlement_id")
+    private String settlementId; //关联核销结算ID，用于区分绑定到哪条记录上
     @Column(name = "source")
     private WriteOffSourceEnum source; //来源
     @Column(name = "type")

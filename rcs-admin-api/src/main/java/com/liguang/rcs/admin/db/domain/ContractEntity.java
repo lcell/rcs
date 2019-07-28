@@ -42,7 +42,13 @@ public class ContractEntity extends  AbstractEntity {
     private Double firstPayment;//首付
     @Column(name = "period_payment")
     private Double periodPayment;// 每期付款
-    @Column(name = "file_path")
-    private String filePath; //合同路径
+    @Column(name = "sales_id")
+    private Long salesId; //销售经理ID
+    @Column(name = "sales_no")
+    private String salesNo; //销售经理编号
+    @Column(name = "team_id")
+    private Long teamId; //团队ID
+//    @Column(name = "file_path")
+//    private String filePath; //合同路径
 
 }

@@ -13,4 +13,13 @@ public class QueryWriteOffParams {
     @ApiModelProperty(value = "合同生效时间, 格式yyyyMMdd", dataType = "String")
     private String effectDate;
 
+    @ApiModelProperty(value = "核销结算ID", dataType = "String")
+    private String settlementId;
+
+    @ApiModelProperty(value = "核销结算类型，0-分期 1-服务费", dataType = "String")
+    private String writeOffType;
+
+    @ApiModelProperty(value = "合同ID", dataType = "String")
+    private String contractId;
+
 }

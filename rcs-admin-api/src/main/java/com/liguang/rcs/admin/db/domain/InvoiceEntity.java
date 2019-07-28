@@ -29,7 +29,7 @@ public class InvoiceEntity extends AbstractEntity {
     private String customName; //客户名称
 
     @Column(name = "amount")
-    private String amount; //发票金额
+    private Double amount; //发票金额
 
     @Column(name = "billing_date")
     private Timestamp billingDate; //开票日期

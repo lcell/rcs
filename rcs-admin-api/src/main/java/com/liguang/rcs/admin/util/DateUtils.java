@@ -28,6 +28,18 @@ public class DateUtils {
         }
     }
 
+    public static int dateMinus(Date date1, Date date2) {
+        return (int)(date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24) - 1;
+    }
+    public static int dateMinus(String date1, String date2, String format) throws ParseException {
+        return dateMinus(toDate(date1, format), toDate(date2, format));
+    }
+    //当前时间 - 输入日期
+    public static int dateMinusToNow(String date, String format) throws ParseException {
+        String dateStr = toString(Calendar.getInstance().getTime(), format);
+        return dateMinus(dateStr, date, format);
+    }
+
     public static Date toDate(String dataStr, String format) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.parse(dataStr);
@@ -46,5 +58,26 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp.getTime());
         return calendar.getTime();
+    }
+    public static int dateMinusForMonth(Date date1, String date2Str, String format) throws ParseException {
+        return dateMinusForMonth(date1, toDate(date2Str, format));
+    }
+
+    public static int dateMinusForMonth(String date1Str, String date2Str, String format) throws ParseException {
+        return dateMinusForMonth(toDate(date1Str, format), toDate(date2Str, format));
+    }
+
+    public static int dateMinusForMonth(Date date1, Date date2) {
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar1.setTime(date1);
+        calendar2.setTime(date2);
+        int deltaYear = calendar1.get(Calendar.YEAR) - calendar2.get(Calendar.YEAR);
+        int deltaMonth = calendar1.get(Calendar.MONTH) - calendar2.get(Calendar.MONTH);
+        return deltaMonth + (deltaYear * 12);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println(dateMinusForMonth("201107", "201208", "yyyyMM"));
     }
 }

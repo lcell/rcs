@@ -9,8 +9,11 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CustomHWReceivableVO extends TableCommonColumn {
-    @ApiModelProperty(value = "应收款合计",dataType = "String")
-    private String receivablePaymentTotal;
+
+    @ApiModelProperty(value = "合同ID", dataType = "String")
+    private String contractId;
+    @ApiModelProperty(value = "应收款合计, 本期总计",dataType = "String")
+    private Double receivablePayment;
     @ApiModelProperty(value = "实际到账金额",dataType = "String")
-    private String actualPayment;
+    private Double actualPayment;
 }

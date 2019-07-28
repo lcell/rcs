@@ -91,10 +91,15 @@ public class ContractVO {
     @NotNull(message = "每期应付不可为空")
     private String periodPayment;
 
+    @ApiModelProperty(value = "销售经理编号", required = true, dataType = "String")
+    @CopyProperty(targetField = "salesNo")
+    @NotNull(message = "销售经理编号不可为空")
+    private String salesNo;
 
-    @ApiModelProperty(value = "合同文件", required = true, dataType = "File")
-    @NotNull(message = "合同文件不可为空")
-    private MultipartFile file;
+//
+//    @ApiModelProperty(value = "合同文件", required = true, dataType = "File")
+//    @NotNull(message = "合同文件不可为空")
+//    private MultipartFile file;
 
     /**
      * 通过entity生成vo对象

@@ -25,7 +25,7 @@ public class AccountEntity extends AbstractEntity {
     private String teamName;//团队
 
     @Column(name = "team_id")
-    private String teamId;//团队ID
+    private Long teamId;//团队ID
 
     @Column(name = "position")
     private String position;//职位

@@ -3,6 +3,8 @@ package com.liguang.rcs.admin.web.contract;
 import com.google.common.base.Strings;
 import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.common.response.ResponseObject;
+import com.liguang.rcs.admin.db.domain.AccountEntity;
+import com.liguang.rcs.admin.service.AccountService;
 import com.liguang.rcs.admin.service.ContractService;
 import com.liguang.rcs.admin.util.NumericUtils;
 import io.swagger.annotations.Api;
@@ -25,6 +27,9 @@ public class ContractController  {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private AccountService accountService;
 
     @PostMapping("/query")
     @ApiOperation("查询合同列表")
@@ -59,11 +64,15 @@ public class ContractController  {
 
     @PostMapping("/create")
     @ApiOperation("创建合同")
-    public ResponseObject<Void> create(@Valid @ModelAttribute ContractVO contract) {
-        //TODO
-        //check
+    public ResponseObject<Void> create(@Valid @RequestBody ContractVO contract) {
+        AccountEntity entity = null;
+        if (contract == null ||
+                (entity = accountService.queryByNo(contract.getSalesNo())) == null) {
+            log.error("[Contract] input is invalid, input:{}", contract);
+            return ResponseObject.badArgumentValue();
+        }
         try {
-            contractService.createContract(contract);
+            contractService.createContract(contract, entity);
             return ResponseObject.success();
         } catch (Exception ex) {
             return ResponseObject.serious();
@@ -83,16 +92,7 @@ public class ContractController  {
     @ApiOperation("查看合同文件")
     @GetMapping("/getContractFile/{id}")
     public ResponseEntity getContractFile(ServletServerHttpResponse response, @RequestParam("id") String id) {
-        try {
-            Long contractId = NumericUtils.toLong(id);
-            if (contractId == null) {
-                log.warn("[Contract] contract must be long type, contractId:{}", id);
-                return ResponseEntity.notFound().build();
-            }
-            return contractService.downloadFile(contractId);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body("Inner Err, System is down.");
-        }
+        return ResponseEntity.badRequest().body("Not Support.");
     }
 
 }

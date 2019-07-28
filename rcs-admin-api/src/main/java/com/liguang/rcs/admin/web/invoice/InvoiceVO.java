@@ -35,7 +35,7 @@ public class InvoiceVO {
     private String writeOffType;
 
     public InvoiceVO(InvoiceEntity entity) {
-        this.amount = entity.getAmount();
+        this.amount = entity.getAmount().toString();
         this.billingDate = DateUtils.toString(entity.getBillingDate(), "yyyy-MM-dd HH:mm:SS");
         this.customId = entity.getCustomId();
         this.customName = entity.getCustomName();

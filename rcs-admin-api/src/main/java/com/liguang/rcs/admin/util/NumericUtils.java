@@ -2,6 +2,8 @@ package com.liguang.rcs.admin.util;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
+
 @Slf4j
 public class NumericUtils {
 
@@ -22,7 +24,7 @@ public class NumericUtils {
             return defaultVal;
         }
     }
-
+/******** Double 相关的处理**********/
     public static Double toDouble(String source) {
         return toDouble(source, null);
     }
@@ -35,6 +37,44 @@ public class NumericUtils {
             return defaultVal;
         }
     }
+
+    public static Double minus(Double double1, Double double2, Double... doubles) {
+        Double result = minus(double1, double2);
+        if (doubles == null || doubles.length == 0) {
+            return  result;
+        }
+        for(Double double3 : doubles) {
+            result = minus(result, double3);
+        }
+        return result;
+    }
+
+    private static Double minus(Double double1, Double double2) {
+        return isNullOrZero(double2) ? double1 : isNullOrZero(double1) ? - double2 : double1 - double2;
+    }
+
+    public static Double plus(Double double1, Double double2, Double... doubles) {
+        Double result = plus(double1, double2);
+        if (doubles == null || doubles.length == 0) {
+            return  result;
+        }
+        for(Double double3 : doubles) {
+            result = plus(result, double3);
+        }
+        return result;
+    }
+    private static Double plus(Double double1, Double double2) {
+        return isNullOrZero(double1) ?  double2 : isNullOrZero(double2) ? double1 : double1 + double2;
+    }
+
+
+    public static Double formatDouble(Double double1, int scale) {
+        if (isNullOrZero(double1)) {
+            return 0d;
+        }
+        return new BigDecimal(double1).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+/******* Double 相关的处理结束  ************/
 
     public static Integer toInteger(String source) {
         return toInteger(source, null);
@@ -60,5 +100,10 @@ public class NumericUtils {
             log.warn("convert to Float Exception, value:{}", source);
             return defaultVal;
         }
+    }
+
+
+    public static boolean isNullOrZero(Number num) {
+        return num == null || num.doubleValue() == 0;
     }
 }

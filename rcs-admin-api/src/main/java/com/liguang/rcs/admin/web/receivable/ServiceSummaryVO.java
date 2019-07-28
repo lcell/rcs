@@ -7,5 +7,5 @@ import lombok.Setter;
 @ApiModel("服务汇总")
 @Getter
 @Setter
-public class ServiceummaryVO extends TableCommonColumn {
+public class ServiceSummaryVO extends TableCommonColumn {
 }

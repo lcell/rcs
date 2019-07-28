@@ -11,6 +11,7 @@ import com.liguang.rcs.admin.service.WriteOffService;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.EnumUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
+import com.liguang.rcs.admin.util.ResponseCode;
 import com.liguang.rcs.admin.web.contract.ContractVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "核销管理API")
 @RestController
@@ -50,10 +52,8 @@ public class WriteOffController {
             log.error("[WriteOff] contract not exist, contractId:{}", contractId);
             return ResponseObject.dataNotExist();
         }
-        //TODO
-
         try {
-            return ResponseObject.success(writeOffService.querySettlement(contract, WriteOffTypeEnum.HARDWARE));
+            return ResponseObject.success(writeOffService.querySettlement(contract));
         } catch (BaseException e) {
             e.printStackTrace();
             return ResponseObject.fail(e.getCode(), e.getMessage());
@@ -64,78 +64,92 @@ public class WriteOffController {
     @PostMapping("/queryWriteOffRecord")
     public ResponseObject<List<WriteOffVO>> queryWriteOffRecord(@RequestBody QueryWriteOffParams params) {
         Timestamp effectTime = null;
+        Long contractId = null;
+        WriteOffTypeEnum type = null;
         if (params == null
                 || (effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyyMMdd")) == null
-                || Strings.isNullOrEmpty(params.getEffectDate())) {
+                || Strings.isNullOrEmpty(params.getEffectDate())
+                || (contractId = NumericUtils.toLong(params.getContractId())) == null
+                || (type = EnumUtils.findByCode(WriteOffTypeEnum.values(), params.getWriteOffType())) == null) {
             log.error("[WriteOff] query params is invalid, params:{}", params);
             return ResponseObject.badArgumentValue();
         }
-        return ResponseObject.success(writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime));
+        return ResponseObject.success(writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime)
+                .stream()
+                .filter(record -> Strings.isNullOrEmpty(record.getContractId()))//未关联合同
+                .filter(record -> record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
+                        && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
+                        && record.getSettlementId().equals(params.getSettlementId()))//关联的合同期号和当前相同
+                .collect(Collectors.toList())
+        );
     }
 
 
     @ApiOperation("关联核销记录到合同")
     @PostMapping("/relationToContract")
     public ResponseObject relationToContract(@Valid @RequestBody WriteOffRelateParams params) {
-        //check
-        Long conId;
-        WriteOffTypeEnum type = null;
-        if (params == null || (conId = NumericUtils.toLong(params.getContractId())) == null
-                || params.getWriteOffIds() == null || params.getWriteOffIds().isEmpty()
-                || (type = EnumUtils.findByCode(WriteOffTypeEnum.values(), params.getWriteOffType())) == null) {
+        if (params == null || Strings.isNullOrEmpty(params.getSettlementId())) {
             log.error("[WriteOff] params is invalid, params:{}", params);
             return ResponseObject.badArgumentValue();
         }
-        ContractVO contractVO = contractService.queryById(conId);
-        if (contractVO == null) {
-            log.error("[WriteOff] contract is not exist, :{}", params.getContractId());
-            return ResponseObject.badArgumentValue();
-        }
-        log.info("[WriteOff] relation to contract, params:{}", params);
-        List<Long> writeOffIds = Lists.newArrayListWithCapacity(params.getWriteOffIds().size());
-        for (String writeOffId : params.getWriteOffIds()) {
-            Long tmpWriteOffId = null;
-            if ((tmpWriteOffId = NumericUtils.toLong(writeOffId)) == null) {
-                log.error("[WriteOff] writeOffId is invalid :{}", writeOffId);
+        try {
+            Long contractId = params.checkAndGetContractId();
+            WriteOffTypeEnum type = params.checkAndGetType();
+            List<Long> writeOffIds = params.checkAndGetWriteOffIds();
+            ContractEntity contract = contractService.queryEntityById(contractId);
+            if (writeOffIds == null || writeOffIds.isEmpty() || contract == null) {
+                log.error("[WriteOff] params is invalid, params:{}", params);
                 return ResponseObject.badArgumentValue();
             }
-            writeOffIds.add(tmpWriteOffId);
+            writeOffService.relationContract(contract, writeOffIds, type, params.getSettlementId());
+            return ResponseObject.success();
+        } catch (BaseException ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.fail(ex.getCode(), ex.getMessage());
         }
-        writeOffService.relationContract(conId, contractVO.getContractNo(), writeOffIds, type);
+    }
+
+    @ApiOperation("根据客户ID同步核销记录")
+    @GetMapping("/sync/{customId}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "customId", value = "客户编号", type = "String", required = true)
+    })
+    public ResponseObject<Void> sync(@PathVariable("customId") String customId) {
+        //TODO
         return ResponseObject.success();
     }
+
 
     @ApiOperation("取消关联核销记录到合同")
     @PostMapping("/unRelationToContract")
     public ResponseObject unRelationToContract(@Valid @RequestBody WriteOffRelateParams params) {
-        Long conId = null;
-        WriteOffTypeEnum type = null;
-        if (params == null || (conId = NumericUtils.toLong(params.getContractId())) == null
-                || params.getWriteOffIds() == null || params.getWriteOffIds().isEmpty()
-                || (type = EnumUtils.findByCode(WriteOffTypeEnum.values(), params.getWriteOffType())) == null) {
+        if (params == null || Strings.isNullOrEmpty(params.getSettlementId())) {
             log.error("[WriteOff] params is invalid, params:{}", params);
             return ResponseObject.badArgumentValue();
         }
-        ContractVO contractVO = contractService.queryById(conId);
-        if (contractVO == null) {
-            log.error("[WriteOff] contract is not exist, :{}", params.getContractId());
-            return ResponseObject.badArgumentValue();
-        }
-        log.info("[WriteOff] unrelation to contract, params:{}", params);
-        List<Long> writeOffIds = Lists.newArrayListWithCapacity(params.getWriteOffIds().size());
-        for (String writeOffId : params.getWriteOffIds()) {
-            Long tmpWriteOffId = null;
-            if ((tmpWriteOffId = NumericUtils.toLong(writeOffId)) == null) {
-                log.error("[WriteOff] writeOffId is invalid :{}", writeOffId);
+        try {
+            Long contractId = params.checkAndGetContractId();
+            WriteOffTypeEnum type = params.checkAndGetType();
+            List<Long> writeOffIds = params.checkAndGetWriteOffIds();
+
+            ContractEntity contract = contractService.queryEntityById(contractId);
+            if (contract == null) {
+                log.error("[WriteOff] contract is not exist, :{}", params.getContractId());
                 return ResponseObject.badArgumentValue();
             }
-            writeOffIds.add(tmpWriteOffId);
+            if (writeOffIds == null || writeOffIds.isEmpty()) {
+                writeOffService.unAllRelationContract(contract, type, params.getSettlementId());
+            } else {
+                writeOffService.unRelationContract(contract, writeOffIds, type, params.getSettlementId());
+            }
+            return ResponseObject.success();
+        } catch (BaseException ex) {
+            log.error("[WriteOff] Inner Err, exception:{}", ex);
+            return ResponseObject.fail(ex.getCode(), ex.getMessage());
         }
-        writeOffService.unRelationContract(conId, contractVO.getContractNo(), writeOffIds, type);
-        return ResponseObject.success();
     }
 
-    @ApiOperation("删除核销记录")
+    @ApiOperation("删除核销记录 For Test")
     @DeleteMapping("/delete/{writeOffId}")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "writeOffId", value = "核销关联ID", type = "String", required = true)
@@ -153,11 +167,11 @@ public class WriteOffController {
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[WriteOff] delete writeOff fail, Exception:{}", ex);
-            return ResponseObject.success();
+            return ResponseObject.fail(ResponseCode.SYS_INNER_ERR);
         }
     }
 
-    @ApiOperation("增加核销结算记录")
+    @ApiOperation("增加核销结算记录 For Test")
     @PostMapping("/createWriteOff")
     public ResponseObject<Void> add(@Valid @RequestBody WriteOffVO writeOff) {
         if (writeOff == null
@@ -197,9 +211,18 @@ public class WriteOffController {
     )
     @GetMapping("/queryCommissionByContractId/{contractId}")
     public ResponseObject<List<CommissionFeeSettlementVO>> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
-
-        //TODO
-        return null;
+        Long contractIdLong = null;
+        ContractEntity contract = null;
+        if ((contractIdLong = NumericUtils.toLong(contractId)) == null
+                || (contract = contractService.queryEntityById(contractIdLong)) == null) {
+            log.error("[WriteOff] contract not exist, contractId:{}", contractId);
+            return ResponseObject.dataNotExist();
+        }
+        try {
+            return ResponseObject.success(writeOffService.queryCommissionByContractId(contract));
+        } catch (Exception e) {
+            return ResponseObject.serious();
+        }
     }
 
 }
