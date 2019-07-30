@@ -1,13 +1,13 @@
 package com.liguang.rcs.admin.web.receivable;
 
+import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
-import com.liguang.rcs.admin.service.ContractService;
-import com.liguang.rcs.admin.service.ReceiveableService;
+import com.liguang.rcs.admin.db.domain.UnAppliedCashEntity;
+import com.liguang.rcs.admin.service.ReceivableService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,31 +23,38 @@ import java.util.List;
 public class ReceivableController {
 
     @Autowired
-    private ReceiveableService receiveableService;
+    private ReceivableService receivableService;
 
     @PostMapping("/queryCustomHw")
     @ApiOperation("查询客户硬件分期")
     public ResponseObject<CustomHwOutput> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param) {
         //TODO //check 参数校验
         try {
-            return ResponseObject.success(receiveableService.queryCustomHw(param));
+            return ResponseObject.success(receivableService.queryCustomHw(param));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
         }
     }
     @PostMapping("/updateCustomHw")
-    @ApiOperation("更新客户硬件分期")
-    public ResponseObject<List<CustomHWReceivableVO>> updateCustomHw(@Valid @RequestBody CustomHWReceivableVO customHWReceivableVO) {
-        //TODO
-        return null;
+    @ApiOperation("更新客户硬件分期手动核实到账")
+    public ResponseObject<Void> updateCustomHw(@Valid @RequestBody CustomReceivableVO customHWReceivableVO) {
+        try {
+            UnAppliedCashEntity entity = customHWReceivableVO.toEntity();
+            entity.setWriteOffType(WriteOffTypeEnum.HARDWARE);
+            receivableService.saveUnAppliedCash(entity);
+            return ResponseObject.success();
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
     @PostMapping("/queryCustomCommission")
     @ApiOperation("查询客户服务费应收")
     public ResponseObject<CustomCommissionOutput> queryCustomCommission(@Valid @RequestBody CustomQueryConditionParam param) {
         try {
-            return ResponseObject.success(receiveableService.queryCustomCommission(param));
+            return ResponseObject.success(receivableService.queryCustomCommission(param));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
@@ -56,39 +63,77 @@ public class ReceivableController {
 
     @PostMapping("/updateCustomCommission")
     @ApiOperation("更新客户服务费手动核实到账")
-    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomCommissionReceivableVO customCommissionReceivableVO) {
-        return null;
+    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomReceivableVO customCommissionReceivableVO) {
+        try {
+            UnAppliedCashEntity entity = customCommissionReceivableVO.toEntity();
+            entity.setWriteOffType(WriteOffTypeEnum.SERVICE);
+            receivableService.saveUnAppliedCash(entity);
+            return ResponseObject.success();
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
 
     @PostMapping("/queryHwDetail")
     @ApiOperation("查询硬件明细")
-    public ResponseObject<List<HardwareDetailVO>> queryHwDetail(@Valid @RequestBody QuerySummaryParam param) {
-        //TODO
-        return null;
+    public ResponseObject<List<ReceivableDetailVo>> queryHwDetail(@Valid @RequestBody QuerySummaryParam param) {
+        //TODO //check 参数校验
+        try {
+            return ResponseObject.success(receivableService.queryReceivableDetail(param, WriteOffTypeEnum.HARDWARE));
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
     @PostMapping("/queryHwSummary")
     @ApiOperation("查询硬件汇总")
-    public ResponseObject<List<HardwareSummaryVO>> queryHwSummary(@Valid @RequestBody QuerySummaryParam param) {
-        //TODO
-        return null;
+    public ResponseObject<List<ReceivableSummaryVo>> queryHwSummary(@Valid @RequestBody QuerySummaryParam param) {
+        //TODO //check 参数校验
+        try {
+            return ResponseObject.success(receivableService.queryReceivableSummary(param, WriteOffTypeEnum.HARDWARE));
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
     @PostMapping("/queryServiceDetail")
     @ApiOperation("查询服务明细")
-    public ResponseObject<List<ServiceDetailVO>> queryServiceDetail(@Valid @RequestBody QuerySummaryParam param) {
-
-        //TODO
-        return null;
+    public ResponseObject<List<ReceivableDetailVo>> queryServiceDetail(@Valid @RequestBody QuerySummaryParam param) {
+        //TODO //check 参数校验
+        try {
+            return ResponseObject.success(receivableService.queryReceivableDetail(param, WriteOffTypeEnum.SERVICE));
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
     @PostMapping("/queryServiceSummary")
     @ApiOperation("查询服务汇总")
-    public ResponseObject<List<ServiceSummaryVO>> queryServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
+    public ResponseObject<List<ReceivableSummaryVo>> queryServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
+        //TODO //check 参数校验
+        try {
+            return ResponseObject.success(receivableService.queryReceivableSummary(param, WriteOffTypeEnum.SERVICE));
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
+    }
 
-        //TODO
-        return null;
+    @PostMapping("/queryHWAndServiceSummary")
+    @ApiOperation("查询服务汇总")
+    public ResponseObject<List<ReceivableSummaryVo>> queryHWAndServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
+        //TODO //check 参数校验
+        try {
+            return ResponseObject.success(receivableService.queryReceivableSummary(param, null));
+        } catch (Exception ex) {
+            log.error("[WriteOff] Inner Err, Exception:{}", ex);
+            return ResponseObject.serious();
+        }
     }
 
 

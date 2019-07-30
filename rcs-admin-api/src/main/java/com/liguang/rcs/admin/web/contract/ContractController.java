@@ -81,18 +81,19 @@ public class ContractController  {
 
     @ApiOperation("修改合同")
     @PostMapping("/modify")
-    public ResponseObject<Void> modify(@Valid @ModelAttribute ContractVO contract) {
-        //TODO
-        //check
-
-
-        return null;
-    }
-
-    @ApiOperation("查看合同文件")
-    @GetMapping("/getContractFile/{id}")
-    public ResponseEntity getContractFile(ServletServerHttpResponse response, @RequestParam("id") String id) {
-        return ResponseEntity.badRequest().body("Not Support.");
+    public ResponseObject<Void> modify(@Valid @RequestBody ContractVO contract) {
+        AccountEntity entity = null;
+        if (contract == null || Strings.isNullOrEmpty(contract.getContractId()) ||
+                (entity = accountService.queryByNo(contract.getSalesNo())) == null) {
+            log.error("[Contract] input is invalid, input:{}", contract);
+            return ResponseObject.badArgumentValue();
+        }
+        try {
+            contractService.createContract(contract, entity);
+            return ResponseObject.success();
+        } catch (Exception ex) {
+            return ResponseObject.serious();
+        }
     }
 
 }

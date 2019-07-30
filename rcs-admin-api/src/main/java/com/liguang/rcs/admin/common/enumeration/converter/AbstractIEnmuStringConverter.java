@@ -13,7 +13,7 @@ public abstract  class AbstractIEnmuStringConverter<S, T> implements TypeConvert
 
     protected  <O extends IEnum> O stringToIEnum(String code, Class clazz) {
         try {
-            if (clazz != null && clazz.isAssignableFrom(IEnum.class) && clazz.isAssignableFrom(Enum.class)) {
+            if (clazz != null && IEnum.class.isAssignableFrom(clazz) && Enum.class.isAssignableFrom(clazz)) {
                 Method method = clazz.getDeclaredMethod("values");
                 IEnum[] values= BeanUtils.invokeStaticMethodWithoutParams(method);
                 return (O) EnumUtils.findByCode(values, code);

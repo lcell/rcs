@@ -1,0 +1,40 @@
+创建发票
+
+{
+  "amount": "50000",
+  "billingDate": "20180717",
+  "customId": "000001",
+  "customName": "客户000001",
+  "identifierCode": "000000000001",
+  "invoiceNo": "000000000001",
+  "subject": "餐饮"
+}
+
+{
+  "amount": "18000",
+  "billingDate": "20180817",
+  "customId": "000001",
+  "customName": "客户000001",
+  "identifierCode": "000000000002",
+  "invoiceNo": "000000000002",
+  "subject": "餐饮"
+}
+
+{
+  "amount": "18000",
+  "billingDate": "20180917",
+  "customId": "000001",
+  "customName": "客户000001",
+  "identifierCode": "000000000003",
+  "invoiceNo": "000000000003",
+  "subject": "餐饮"
+}
+{
+  "amount": "18000",
+  "billingDate": "20181017",
+  "customId": "000001",
+  "customName": "客户000001",
+  "identifierCode": "000000000004",
+  "invoiceNo": "000000000004",
+  "subject": "餐饮"
+}

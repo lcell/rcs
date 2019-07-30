@@ -1,17 +1,21 @@
 package com.liguang.rcs.admin.db.domain;
 
+import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
+import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffSourceToString;
+import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Data
 @Entity
 @Table(name = "rcs_unapplied_cache")
-public class UnAppliedCashEntity  extends  AbstractEntity {
+public class UnAppliedCashEntity extends AbstractEntity {
     @Column(name = "ref_contract_id")
-    private Long refContractId; //关联的合同编号
+    private Long refContractId; //关联的合同Id
     @Column(name = "receivable_amount")
     private Double receivableAmount; //应收合计
     @Column(name = "actual_pay_amount")
@@ -34,6 +38,12 @@ public class UnAppliedCashEntity  extends  AbstractEntity {
     private Double day_lt_90_total;//逾期大于90天合计
     @Column(name = "day_lt_90_total")
     private Double day_lt_90_ratio;//逾期大于90天占比
-    @Column(name = "net_total")
-    private Double netTotal; //逾期合计
+    @Column(name = "overdue_total")
+    private Double overdueTotal; //逾期合计
+    @Column(name = "total")
+    private Double total; //本期合计
+    @Column(name = "write_off_type")
+    @Convert(converter = WriteOffTypeToString.class)
+    private WriteOffTypeEnum writeOffType;
+
 }

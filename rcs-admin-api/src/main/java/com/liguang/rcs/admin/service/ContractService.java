@@ -6,6 +6,7 @@ import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.db.domain.AccountEntity;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.repository.ContractRepository;
+import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.web.contract.ContractVO;
 import com.liguang.rcs.admin.web.contract.QueryParams;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +89,9 @@ public class ContractService {
                 conditions.add(cb.equal(root.get("productType"), params.getProductType()));
             }
             if (!Strings.isNullOrEmpty(params.getStartDate()) && !Strings.isNullOrEmpty(params.getEndDate())) {
-                conditions.add(cb.between(root.get("effectiveDate"), params.getStartDate(), params.getEndDate()));
+                conditions.add(cb.between(root.get("effectiveDate"),
+                        DateUtils.softToTimestamp(params.getStartDate(), "yyyy-MM-dd"),
+                        DateUtils.softToTimestamp(params.getEndDate(), "yyyy-MM-dd")));
             }
 
             return cb.and(conditions.toArray(new Predicate[conditions.size()]));

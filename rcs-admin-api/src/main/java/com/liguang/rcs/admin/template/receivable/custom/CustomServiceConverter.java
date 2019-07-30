@@ -1,8 +1,7 @@
 package com.liguang.rcs.admin.template.receivable.custom;
 
 import com.liguang.rcs.admin.common.template.ConverterStrategy;
-import com.liguang.rcs.admin.template.receivable.AbstractCommonConverter;
-import com.liguang.rcs.admin.web.receivable.CustomCommissionReceivableVO;
+import com.liguang.rcs.admin.web.receivable.CustomReceivableVO;
 import com.liguang.rcs.admin.web.writeoff.CommissionFeeSettlementVO;
 
 import static com.liguang.rcs.admin.util.NumericUtils.*;
@@ -10,23 +9,23 @@ import static com.liguang.rcs.admin.util.NumericUtils.*;
 /**
  * 服务费应收统计报表转换
  */
-public class CustomServiceConverter extends AbstractCommonConverter implements ConverterStrategy<CommissionFeeSettlementVO, CustomCommissionReceivableVO> {
+public class CustomServiceConverter extends AbstractCommonConverter implements ConverterStrategy<CommissionFeeSettlementVO, CustomReceivableVO> {
     @Override
-    public CustomCommissionReceivableVO convert(String key, CommissionFeeSettlementVO data, CustomCommissionReceivableVO vo) {
+    public CustomReceivableVO convert(String key, CommissionFeeSettlementVO data, CustomReceivableVO vo) {
         if (vo == null) {
-            vo = new CustomCommissionReceivableVO();
+            vo = new CustomReceivableVO();
             vo.setNPer(key);
         }
         //本期合计为 本期应收
+        vo.setReceivablePayment(plus(data.getPayAmount(), vo.getReceivablePayment()));
         vo.setTotal(plus(data.getPayAmount(), vo.getTotal()));
-        if (isNullOrZero(data.getOverdueAmount())) { //如果逾期为0，则未逾期 = 计划应付-实际应付
-            Double unOverdueAmount = minus(data.getPayAmount(), data.getActualPayAmount());
-            vo.setUnOverdueAmount(plus(unOverdueAmount, vo.getUnOverdueAmount()));
-        } else { //存在逾期， 将逾期写入到对应的逾期天数条目中
+        if (!isNullOrZero(data.getOverdueAmount())) { //存在逾期， 将逾期写入到对应的逾期天数条目中
             setOverdueAmount(vo, data.getOverdueNumOfDate(), data.getOverdueAmount());
         }
         //设置逾期统计
         buildOverdueTotal(vo);
+        //未逾期的计算方式 合计应收-实际支付 - 逾期金额
+        vo.setUnOverdueAmount(minus(vo.getReceivablePayment() , vo.getActualPayment(), vo.getOverdueTotal()));
         return vo;
     }
 }

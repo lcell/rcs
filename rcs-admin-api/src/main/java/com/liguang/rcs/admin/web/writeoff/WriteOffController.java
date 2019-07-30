@@ -27,6 +27,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.liguang.rcs.admin.util.NumericUtils.plus;
+
 @Api(tags = "核销管理API")
 @RestController
 @RequestMapping("/rcs/writeOff")
@@ -53,12 +55,17 @@ public class WriteOffController {
             return ResponseObject.dataNotExist();
         }
         try {
-            return ResponseObject.success(writeOffService.querySettlement(contract));
+            List<WriteOffSettlementVO> settlementVOS = writeOffService.querySettlement(contract);
+            if (settlementVOS != null && !settlementVOS.isEmpty()) {
+                settlementVOS.add(WriteOffSettlementVO.buildTotal(settlementVOS));
+            }
+            return ResponseObject.success(settlementVOS);
         } catch (BaseException e) {
-            e.printStackTrace();
+            log.error("[WriteOff] Inner Err, Exception:{}", e);
             return ResponseObject.fail(e.getCode(), e.getMessage());
         }
     }
+
 
     @ApiOperation("根据客户ID和合同生效时间查看核销记录列表")
     @PostMapping("/queryWriteOffRecord")
@@ -67,7 +74,7 @@ public class WriteOffController {
         Long contractId = null;
         WriteOffTypeEnum type = null;
         if (params == null
-                || (effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyyMMdd")) == null
+                || (effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyy-MM-dd")) == null
                 || Strings.isNullOrEmpty(params.getEffectDate())
                 || (contractId = NumericUtils.toLong(params.getContractId())) == null
                 || (type = EnumUtils.findByCode(WriteOffTypeEnum.values(), params.getWriteOffType())) == null) {
@@ -76,10 +83,10 @@ public class WriteOffController {
         }
         return ResponseObject.success(writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime)
                 .stream()
-                .filter(record -> Strings.isNullOrEmpty(record.getContractId()))//未关联合同
-                .filter(record -> record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
+                .filter(record -> Strings.isNullOrEmpty(record.getContractId()) ||
+                        (record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
                         && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
-                        && record.getSettlementId().equals(params.getSettlementId()))//关联的合同期号和当前相同
+                        && record.getSettlementId().equals(params.getSettlementId())))//关联的合同期号和当前相同
                 .collect(Collectors.toList())
         );
     }
@@ -219,8 +226,13 @@ public class WriteOffController {
             return ResponseObject.dataNotExist();
         }
         try {
-            return ResponseObject.success(writeOffService.queryCommissionByContractId(contract));
+            List<CommissionFeeSettlementVO> commissionFeeSettlementVOS = writeOffService.queryCommissionByContractId(contract);
+            if (commissionFeeSettlementVOS != null && !commissionFeeSettlementVOS.isEmpty()) {
+                commissionFeeSettlementVOS.add(CommissionFeeSettlementVO.buildTotal(commissionFeeSettlementVOS));
+            }
+            return ResponseObject.success(commissionFeeSettlementVOS);
         } catch (Exception e) {
+            log.error("[WriteOff] Inner Err, Exception:", e);
             return ResponseObject.serious();
         }
     }

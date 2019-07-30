@@ -2,10 +2,13 @@ package com.liguang.rcs.admin.db.domain;
 
 import com.liguang.rcs.admin.common.enumeration.WriteOffSourceEnum;
 import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
+import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffSourceToString;
+import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -30,7 +33,9 @@ public class WriteOffEntity extends AbstractEntity {
     @Column(name = "settlement_id")
     private String settlementId; //关联核销结算ID，用于区分绑定到哪条记录上
     @Column(name = "source")
+    @Convert(converter = WriteOffSourceToString.class)
     private WriteOffSourceEnum source; //来源
     @Column(name = "type")
+    @Convert(converter = WriteOffTypeToString.class)
     private WriteOffTypeEnum type; //核销类型
 }

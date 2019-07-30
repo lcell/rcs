@@ -8,6 +8,7 @@ import com.liguang.rcs.admin.web.receivable.TableCommonColumn;
  * 31-61天逾期
  */
 public enum ActionPlanEnum {
+    CLEAN_UP("服务结清"),
     NORMAL("正常"),
     PROMPT("催款函+利息") ,
     STOP_SERVICE("停服+法务催款函"),
@@ -27,6 +28,10 @@ public enum ActionPlanEnum {
         }
         if (!NumericUtils.isNullOrZero(column.getDay31_60())) {
             return PROMPT;
+        }
+        if (NumericUtils.isNullOrZero(column.getOverdueTotal())
+                && NumericUtils.isNullOrZero(column.getUnOverdueAmount())) {
+            return CLEAN_UP;
         }
         return NORMAL;
     }

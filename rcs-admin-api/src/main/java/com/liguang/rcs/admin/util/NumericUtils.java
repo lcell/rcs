@@ -50,7 +50,13 @@ public class NumericUtils {
     }
 
     private static Double minus(Double double1, Double double2) {
-        return isNullOrZero(double2) ? double1 : isNullOrZero(double1) ? - double2 : double1 - double2;
+        if (isNullOrZero(double2)) {
+            return double1;
+        }
+        if (isNullOrZero(double1)) {
+            return -double2;
+        }
+        return double1 - double2;
     }
 
     public static Double plus(Double double1, Double double2, Double... doubles) {
@@ -64,9 +70,14 @@ public class NumericUtils {
         return result;
     }
     private static Double plus(Double double1, Double double2) {
-        return isNullOrZero(double1) ?  double2 : isNullOrZero(double2) ? double1 : double1 + double2;
+        if (isNullOrZero(double1)) {
+            return double2;
+        }
+        if (isNullOrZero(double2)) {
+            return double1;
+        }
+        return double1 + double2;
     }
-
 
     public static Double formatDouble(Double double1, int scale) {
         if (isNullOrZero(double1)) {

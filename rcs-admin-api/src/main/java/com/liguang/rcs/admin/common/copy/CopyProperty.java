@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CopyProperty {
     //需要拷贝的目的字段
-    String targetField();
+    String targetField() default "";
 
     //数据类型转换类
     Class<? extends TypeConverter> typeCovertClass() default NonTypeConverter.class;

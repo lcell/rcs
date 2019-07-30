@@ -10,7 +10,7 @@ public class QueryWriteOffParams {
     @ApiModelProperty(value = "客户ID", dataType = "String")
     private String customId;
 
-    @ApiModelProperty(value = "合同生效时间, 格式yyyyMMdd", dataType = "String")
+    @ApiModelProperty(value = "合同生效时间, 格式yyyy-MM-dd", dataType = "String")
     private String effectDate;
 
     @ApiModelProperty(value = "核销结算ID", dataType = "String")

@@ -9,13 +9,11 @@ import lombok.Data;
 public class CustomQueryConditionParam {
 
     @ApiModelProperty(value = "客户编号", dataType = "String")
-    private String customId;
+    private String customNo;
     @ApiModelProperty(value = "客户名称", dataType = "String")
     private String customName;
-    @ApiModelProperty(value = "合同ID", dataType = "String")
-    private String contractId;
-    @ApiModelProperty(value = "起始时间", dataType = "String")
+    @ApiModelProperty(value = "合同编号", dataType = "String")
+    private String contractNo;
+    @ApiModelProperty(value = "起始时间 格式yyyy-MM-dd", dataType = "String")
     private String beginDate;
-    @ApiModelProperty(value = "结束时间", dataType = "String")
-    private String endDate;
 }

@@ -7,8 +7,10 @@ import com.liguang.rcs.admin.service.InvoiceService;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.EnumUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
+import com.liguang.rcs.admin.web.contract.ContractVO;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,7 @@ public class InvoiceController {
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "customId", type = "String", value = "客户ID", required = true),
-                    @ApiImplicitParam(name = "effectDate", type = "String", value = "合同生效时间,格式yyyy-MM-dd HH:mm:SS", required = true)
+                    @ApiImplicitParam(name = "effectDate", type = "String", value = "合同生效时间,格式yyyy-MM-dd", required = true)
             }
     )
     public ResponseObject<List<InvoiceVO>> queryByCustomIdAndEffectTime(
@@ -42,7 +44,7 @@ public class InvoiceController {
             return ResponseObject.badArgumentValue();
         }
         try {
-            Timestamp timestamp = DateUtils.toTimestamp(effectDate, "yyyy-MM-dd HH:mm:SS");
+            Timestamp timestamp = DateUtils.toTimestamp(effectDate, "yyyy-MM-dd");
             return ResponseObject.success(invoiceService.queryByCustomAndEffectDate(customId, timestamp));
         } catch (Exception ex) {
             log.error("[Invoice] query fail, Exception:{}", ex);
@@ -64,11 +66,15 @@ public class InvoiceController {
             log.error("[Invoice] param is invalid, contractId:{}, type:{}", contractId, type);
             return ResponseObject.badArgumentValue();
         }
-
         return ResponseObject.success(invoiceService.queryRelatedList(contractIdLong, writeOffType));
-
     }
 
+    @ApiOperation("创建或修改发票信息 for Test")
+    @PostMapping("/create")
+    public ResponseObject create(@Valid @RequestBody InvoiceVO invoiceVO) {
+        invoiceService.saveInvoice(invoiceVO.toEntity());
+        return ResponseObject.success();
+    }
 
     @ApiOperation("根据客户编号进行同步发票")
     @PostMapping("/sync/{customId}")
@@ -82,19 +88,14 @@ public class InvoiceController {
     }
     @ApiOperation("将发票关联到合同上")
     @PostMapping("/relationToContract")
-    public ResponseObject<Void> relationToContract(@Valid @RequestBody RelationToContractVO input) {
-        //check
-        WriteOffTypeEnum writeOffType = null;
-        if (input == null
-                || Strings.isNullOrEmpty(input.getContractId())
-                || input.getInvoiceIds() == null || input.getInvoiceIds().isEmpty()
-                || (writeOffType = EnumUtils.findByCode(WriteOffTypeEnum.values(), input.getType())) == null) {
-            log.error("[Invoice] input is invalid, input:{}", input);
+    public ResponseObject<Void> relationToContract(@Valid @RequestBody RelationToContractVO vo) {
+        if (vo == null) {
+            log.error("[Invoice] input is null.");
             return ResponseObject.badArgumentValue();
         }
         try {
-            List<Long> invoiceIds = input.getInvoiceIds().stream().map(Long::parseLong).collect(Collectors.toList());
-            invoiceService.relationToContract(Long.parseLong(input.getContractId()), invoiceIds, writeOffType);
+            vo.check();
+            invoiceService.relationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds(), vo.checkAndGetType());
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[Invoice] Inner Err, Exception:{}", ex);
@@ -104,19 +105,14 @@ public class InvoiceController {
 
     @ApiOperation("取消关联发票到合同上")
     @PostMapping("/unRelationToContract")
-    public ResponseObject unRelationToContract(@Valid @RequestBody RelationToContractVO input) {
-        //check
-        WriteOffTypeEnum writeOffType = null;
-        if (input == null
-                || Strings.isNullOrEmpty(input.getContractId())
-                || input.getInvoiceIds() == null || input.getInvoiceIds().isEmpty()
-                || (writeOffType = EnumUtils.findByCode(WriteOffTypeEnum.values(), input.getType())) == null) {
-            log.error("[Invoice] input is invalid, input:{}", input);
+    public ResponseObject unRelationToContract(@Valid @RequestBody RelationToContractVO vo) {
+        if (vo == null) {
+            log.error("[Invoice] input is null.");
             return ResponseObject.badArgumentValue();
         }
         try {
-            List<Long> invoiceIds = input.getInvoiceIds().stream().map(Long::parseLong).collect(Collectors.toList());
-            invoiceService.unRelationToContract(Long.parseLong(input.getContractId()), invoiceIds, writeOffType);
+            vo.check();
+            invoiceService.unRelationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds(), vo.checkAndGetType());
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[Invoice] Inner Err, Exception:{}", ex);

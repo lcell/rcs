@@ -41,7 +41,7 @@ public class ContractVO {
     private String customName;
     @ApiModelProperty(value = "合同类型", required = true, dataType = "String")
     @CopyProperty(targetField = "type", typeCovertClass = StringToIEnumConverter.class, extClass = ContractTypeEnum.class)
-    @NotNull(message = "合同类型不可为空")
+    //@NotNull(message = "合同类型不可为空")
     private String type;
     @ApiModelProperty(value = "合同总金额", required = true, dataType = "String")
     @CopyProperty(targetField = "totalAmount", typeCovertClass = StringToNumberConverter.class, extClass = Double.class)
@@ -73,11 +73,11 @@ public class ContractVO {
 
     @ApiModelProperty(value = "产品类型", required = true, dataType = "String")
     @CopyProperty(targetField = "productType", typeCovertClass = StringToIEnumConverter.class, extClass= ProductTypeEnum.class)
-    @NotNull(message = "产品类型不可为空")
+    //@NotNull(message = "产品类型不可为空")
     private String productType;
 
     @ApiModelProperty(value = "应收期数", required = true, dataType = "String")
-    @CopyProperty(targetField = "productType", typeCovertClass = StringToNumberConverter.class, extClass = Integer.class)
+    @CopyProperty(targetField = "receivableNum", typeCovertClass = StringToNumberConverter.class, extClass = Integer.class)
     @NotNull(message = "应收期数不可为空")
     private String receivableNum;
 

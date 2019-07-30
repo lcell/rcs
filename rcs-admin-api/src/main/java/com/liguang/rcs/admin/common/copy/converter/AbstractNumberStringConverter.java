@@ -6,6 +6,12 @@ import com.liguang.rcs.admin.util.NumericUtils;
 public abstract class AbstractNumberStringConverter {
 
     protected String numericToString(Object numeric) {
+        if (numeric instanceof Double) {
+            double num = (Double)numeric;
+            if (num == (long) num) {
+                return Long.toString((long) num);
+            }
+        }
         return numeric.toString();
     }
 

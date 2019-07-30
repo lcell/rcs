@@ -17,5 +17,5 @@ public class CustomHwOutput {
     @ApiModelProperty(value = "逾期手段", dataType = "String")
     private String actionPlan;
     @ApiModelProperty(value = "客户硬件应收列表", dataType = "List", required = true)
-    private List<CustomHWReceivableVO> hwReceivableVOS;
+    private List<CustomReceivableVO> hwReceivableVOS;
 }

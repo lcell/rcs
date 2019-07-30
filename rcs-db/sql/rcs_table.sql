@@ -85,3 +85,83 @@ CREATE TABLE `rcs_sys_log` (
   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作日志表';
+
+
+
+
+
+DROP TABLE IF EXISTS `rcs_invoice`;
+
+CREATE TABLE `rcs_invoice` (
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `identifier_code` varchar(50)  DEFAULT NULL COMMENT '发票识别码',
+  `invoice_no` varchar(50)  DEFAULT NULL COMMENT '发表编号',
+  `subject` varchar(45)  DEFAULT NULL COMMENT '发票科目',
+  `custom_id` varchar(50) DEFAULT NULL COMMENT '客户ID',
+  `custom_name` varchar(50)  DEFAULT NULL COMMENT '客户名称',
+  `amount` double(16,2)  DEFAULT NULL COMMENT '合同金额',
+  `billing_date` datetime DEFAULT NULL COMMENT '开票时间',
+  `contract_id` int(32) DEFAULT NULL COMMENT '关联的合同ID',
+  `write_off_type` varchar(10) DEFAULT NULL COMMENT '关联的核销类型',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='发票记录表';
+
+
+
+DROP TABLE IF EXISTS `rcs_write_off`;
+
+CREATE TABLE `rcs_write_off` (
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `custom_id` varchar(50) DEFAULT NULL COMMENT '客户ID',
+  `custom_name` varchar(50)  DEFAULT NULL COMMENT '客户名称',
+  `payment_amount` double(16,2)  DEFAULT NULL COMMENT '支付金额',
+  `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
+  `ref_contract_id` int(32) DEFAULT NULL COMMENT '关联的合同ID',
+  `type` varchar(10) DEFAULT NULL COMMENT '关联的核销类型',
+  `source` varchar(10) DEFAULT "0" COMMENT '记录来源',
+  `settlement_id` varchar(50)  DEFAULT NULL COMMENT '关联核销结算ID，用于区分绑定到哪条记录上',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='核销记录表';
+
+
+DROP TABLE IF EXISTS `rcs_contract`;
+CREATE TABLE `rcs_contract` (
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `contract_no` varchar(50)  DEFAULT NULL COMMENT '发表编号',
+  `custom_id` varchar(50) DEFAULT NULL COMMENT '客户ID',
+  `custom_name` varchar(50)  DEFAULT NULL COMMENT '客户名称',
+  `total_amount` double(16,2)  DEFAULT NULL COMMENT '合同金额',
+  `first_payment` double(16,2)  DEFAULT NULL COMMENT '首付',
+  `period_payment` double(16,2) DEFAULT NULL COMMENT '每期应付',
+  `receivable_num` int(6) DEFAULT NULL COMMENT '期数',
+  `effective_date` datetime DEFAULT NULL COMMENT '合同生效日期',
+
+  `contract_type` varchar(10) DEFAULT NULL COMMENT '合同类型',
+  `contract_status` varchar(10) DEFAULT NULL COMMENT '合同状态',
+  `product_type` varchar(10) DEFAULT NULL COMMENT '产品类型',
+
+
+  `contact_name` varchar(50)  DEFAULT NULL COMMENT '联系人',
+  `custom_tel` varchar(20)  DEFAULT NULL COMMENT '联系手机号',
+  `custom_email` varchar(50)  DEFAULT NULL COMMENT '邮箱',
+
+  `sales_id` int(32) DEFAULT NULL COMMENT '销售经理ID',
+  `sales_no` varchar(50)  DEFAULT NULL COMMENT '销售员工号',
+  `sales_name` varchar(50) DEFAULT NULL COMMENT '销售名',
+  `team_id` int(32) DEFAULT NULL COMMENT '团队ID',
+
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='合同记录表';
+

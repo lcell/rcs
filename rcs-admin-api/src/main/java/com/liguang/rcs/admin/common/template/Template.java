@@ -38,9 +38,17 @@ public class Template<D, T> {
     }
 
     //将数据汇总返回
-    public List<T> buildDataList(T defaultVal) {
+    public List<T> buildDataList(DefaultBuilder<T> defaultBuilder) {
         return keyStrategy.getAllRowKey().stream()
-                .map((key) -> rowMap.getOrDefault(key, defaultVal))
+                .map((key) -> rowMap.getOrDefault(key, defaultBuilder.build(key)))
                 .collect(Collectors.toList());
+    }
+
+    public <T extends  ConverterStrategy> T getConverterStrategy() {
+        return (T)converterStrategy;
+    }
+
+    public <T extends KeyStrategy> T getKeyStrategy() {
+        return (T)keyStrategy;
     }
 }

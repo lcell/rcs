@@ -1,7 +1,6 @@
 package com.liguang.rcs.admin.service;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
@@ -11,15 +10,12 @@ import com.liguang.rcs.admin.web.contract.ContractVO;
 import com.liguang.rcs.admin.web.invoice.InvoiceVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,7 +34,7 @@ public class InvoiceService {
      */
     public List<InvoiceVO> queryByCustomAndEffectDate(String customId, Timestamp effectDate) {
         List<InvoiceEntity> entity = invoiceRepository.findByCustomIdAndBillingDateGreaterThanEqualOrderByBillingDateDesc(customId, effectDate);
-        return entity.stream().map(InvoiceVO :: new).collect(Collectors.toList());
+        return entity.stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
     }
 
     /**
@@ -47,26 +43,28 @@ public class InvoiceService {
      * @param invoiceIds
      * @param writeOffType
      */
+    @Transactional
     public void relationToContract(Long contractId, List<Long> invoiceIds, WriteOffTypeEnum writeOffType) {
         ContractVO contract = contractService.queryById(contractId);
         if (contract == null) {
             //TODO
             throw new RuntimeException("contract not exist");
         }
-        invoiceRepository.relationToContract(contractId, contract.getContractNo(), writeOffType.getCode(), invoiceIds);
+        invoiceRepository.relationToContract(contractId, writeOffType.getCode(), invoiceIds);
     }
 
+    @Transactional
     public void unRelationToContract(long contractId, List<Long> invoiceIds, WriteOffTypeEnum writeOffType) {
         ContractVO contract = contractService.queryById(contractId);
         if (contract == null) {
             //TODO
             throw new RuntimeException("contract not exist");
         }
-        invoiceRepository.unRelationToContract(contractId, contract.getContractNo(), writeOffType.getCode(), invoiceIds);
+        invoiceRepository.unRelationToContract(contractId, writeOffType.getCode(), invoiceIds);
     }
 
     public List<InvoiceEntity> queryRelatedEntityList(Long contractId, WriteOffTypeEnum type) {
-        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findByContractIdAndWriteOffTypeOrderByBillingDateDesc(contractId, type);
+        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findByContractIdAndWriteOffTypeOrderByBillingDate(contractId, type);
         if (invoiceEntityLst == null || invoiceEntityLst.isEmpty()) {
             return Collections.emptyList();
         }
@@ -74,7 +72,7 @@ public class InvoiceService {
     }
 
     public List<InvoiceVO> queryRelatedList(Long contractId, WriteOffTypeEnum type) {
-        return queryRelatedEntityList(contractId, type).stream().map(InvoiceVO::new).collect(Collectors.toList());
+        return queryRelatedEntityList(contractId, type).stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
     }
 
     /**
@@ -88,5 +86,9 @@ public class InvoiceService {
             entityMap.put(monthKey, invoice);
         }
         return entityMap;
+    }
+
+    public void saveInvoice(InvoiceEntity toEntity) {
+        this.invoiceRepository.save(toEntity);
     }
 }

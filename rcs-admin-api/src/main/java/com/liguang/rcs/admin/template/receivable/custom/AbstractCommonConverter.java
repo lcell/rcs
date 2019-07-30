@@ -1,4 +1,4 @@
-package com.liguang.rcs.admin.template.receivable;
+package com.liguang.rcs.admin.template.receivable.custom;
 
 import com.liguang.rcs.admin.common.enumeration.OverdueDateEnum;
 import com.liguang.rcs.admin.web.receivable.TableCommonColumn;

@@ -1,6 +1,8 @@
 package com.liguang.rcs.admin.template.receivable.custom;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.liguang.rcs.admin.common.Constant;
 import com.liguang.rcs.admin.common.template.KeyStrategy;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.web.writeoff.CommissionFeeSettlementVO;
@@ -9,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 @Slf4j
 public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettlementVO> {
-    private static final String TOTAL_BY_DUE_DATE_RANGE = "Total by Due Date Range";
     private final String firstDate;
 
     public CustomServiceKeyStrategy(String firstDate) {
@@ -20,11 +21,15 @@ public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettle
     public List<String> getRowKey(CommissionFeeSettlementVO data) {
         try {
             //计算出相差的天数-30, 此后开始计算逾期
-            int deltaDate = DateUtils.dateMinus(firstDate, data.getPayDate(), "yyyyMMdd");
+            int deltaDate = DateUtils.dateMinus( data.getPayDate(), firstDate, "yyyyMMdd") - 30;
             List<String> keys = Lists.newArrayList();
-
-
-            return null;
+            keys.add(getKey(deltaDate));
+            String totalKey = getTotalKey(deltaDate);
+            if (!Strings.isNullOrEmpty(totalKey)) {
+                keys.add(totalKey);
+            }
+            keys.add(Constant.TOTAL_BY_DUE_DATE_RANGE);
+            return keys;
         } catch (Exception ex) {
             log.error("[Converter] Get Key fail, Exception:{}", ex);
             throw new RuntimeException("Inner Err");
@@ -76,7 +81,7 @@ public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettle
         if (preTotalRow != null) {
             resultKeys.add(preTotalRow);
         }
-        resultKeys.add(TOTAL_BY_DUE_DATE_RANGE);
+        resultKeys.add(Constant.TOTAL_BY_DUE_DATE_RANGE);
         return resultKeys;
     }
     /*

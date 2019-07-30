@@ -46,12 +46,15 @@ public class WriteOffVO {
     private String settlementId;
 
     @ApiModelProperty(value = "关联的合同ID", dataType = "String")
-    @CopyProperty(targetField = "contractId", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
+    @CopyProperty(targetField = "refContractId", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
     private String contractId;
 
     @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
     @CopyProperty(targetField = "type", typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
     private String type;
+    @ApiModelProperty(value = "核销记录ID", dataType = "String")
+    @CopyProperty(targetField = "id", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
+    private String writeOffId;
 //
 //    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
 //    private String type;

@@ -2,6 +2,7 @@ package com.liguang.rcs.admin.util;
 
 public enum  ResponseCode {
     USER_INVALID_ACCOUNT("605","用户帐号或密码不正确"),
+
     BAD_ARGUMENT("401", "参数不对"),
     BAD_ARGUMENT_VALUE("402", "参数值不对"),
     NOT_EXIST("404", "数据不存在"),

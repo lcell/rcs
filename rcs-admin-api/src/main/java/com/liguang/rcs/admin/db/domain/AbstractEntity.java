@@ -10,7 +10,7 @@ import java.util.Calendar;
 @Data
 public abstract class AbstractEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;//ID，本平台自动生成的
 

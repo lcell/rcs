@@ -1,4 +1,6 @@
 spring:
+  jackson:
+    default-property-inclusion: non_null
   profiles:
     active: admin
   messages:
@@ -25,6 +27,9 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+      properties:
+        hibernate:
+          format_sql: true
       show-sql: true
       hibernate:
         ddl-auto: none
@@ -37,8 +42,7 @@ server:
 
 logging:
   level:
-    root:  ERROR
-    org.springframework:  ERROR
-    org.mybatis:  ERROR
+    root:  INFO
+    org.springframework:  INFO
     com.liguang.rcs.admin:  DEBUG
-    com.liguang.rcs:  ERROR
+    com.liguang.rcs:  DEBUG

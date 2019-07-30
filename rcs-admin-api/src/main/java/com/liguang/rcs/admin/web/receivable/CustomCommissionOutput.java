@@ -11,9 +11,10 @@ import java.util.List;
 public class CustomCommissionOutput {
     @ApiModelProperty(value = "合同ID", dataType = "String", required = true)
     private String contractId;
-
     @ApiModelProperty(value = "合同编号", dataType = "String", required = true)
     private String contractNo;
+    @ApiModelProperty(value = "逾期手段", dataType = "String")
+    private String actionPlan;
     @ApiModelProperty(value = "客户服务费应收", dataType = "List", required = true)
-    private List<CustomCommissionReceivableVO> commissionReceivableVOS;
+    private List<CustomReceivableVO> commissionReceivableVOS;
 }

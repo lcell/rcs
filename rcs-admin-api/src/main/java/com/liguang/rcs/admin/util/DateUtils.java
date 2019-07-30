@@ -29,7 +29,7 @@ public class DateUtils {
     }
 
     public static int dateMinus(Date date1, Date date2) {
-        return (int)(date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24) - 1;
+        return (int)((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)) - 1;
     }
     public static int dateMinus(String date1, String date2, String format) throws ParseException {
         return dateMinus(toDate(date1, format), toDate(date2, format));
@@ -43,6 +43,14 @@ public class DateUtils {
     public static Date toDate(String dataStr, String format) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.parse(dataStr);
+    }
+
+    public static Date softToDate(String monthStr, String format) {
+        try {
+            return toDate(monthStr, format);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public static String toString(Date date, String format) {
@@ -80,4 +88,5 @@ public class DateUtils {
     public static void main(String[] args) throws Exception {
         System.out.println(dateMinusForMonth("201107", "201208", "yyyyMM"));
     }
+
 }
