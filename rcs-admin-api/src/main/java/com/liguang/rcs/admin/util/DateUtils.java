@@ -28,14 +28,14 @@ public class DateUtils {
         }
     }
 
-    public static int dateMinus(Date date1, Date date2) {
-        return (int)((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)) - 1;
+    public static long dateMinus(Date date1, Date date2) {
+        return (date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24);
     }
-    public static int dateMinus(String date1, String date2, String format) throws ParseException {
+    public static long dateMinus(String date1, String date2, String format) throws ParseException {
         return dateMinus(toDate(date1, format), toDate(date2, format));
     }
     //当前时间 - 输入日期
-    public static int dateMinusToNow(String date, String format) throws ParseException {
+    public static long dateMinusToNow(String date, String format) throws ParseException {
         String dateStr = toString(Calendar.getInstance().getTime(), format);
         return dateMinus(dateStr, date, format);
     }

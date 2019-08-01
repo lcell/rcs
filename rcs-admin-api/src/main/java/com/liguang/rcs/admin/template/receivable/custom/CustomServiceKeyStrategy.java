@@ -21,7 +21,7 @@ public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettle
     public List<String> getRowKey(CommissionFeeSettlementVO data) {
         try {
             //计算出相差的天数-30, 此后开始计算逾期
-            int deltaDate = DateUtils.dateMinus( data.getPayDate(), firstDate, "yyyyMMdd") - 30;
+            long deltaDate = DateUtils.dateMinus( data.getPayDate(), firstDate, "yyyyMMdd") - 30;
             List<String> keys = Lists.newArrayList();
             keys.add(getKey(deltaDate));
             String totalKey = getTotalKey(deltaDate);
@@ -36,7 +36,7 @@ public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettle
         }
     }
 
-    private String getKey(int deltaDay) {
+    private String getKey(long deltaDay) {
         if (deltaDay <= 0) {
             return "0day";
         } else if(deltaDay >= 331 && deltaDay <= 365) {
@@ -49,7 +49,7 @@ public class CustomServiceKeyStrategy implements KeyStrategy<CommissionFeeSettle
                 .append("-").append(String.valueOf(deltaMonth * 30))
                 .append("days").toString();
     }
-    private String getTotalKey(int deltaDay) {
+    private String getTotalKey(long deltaDay) {
         if (deltaDay <= 30) {
             return "0-30days";
         }

@@ -71,8 +71,11 @@ public class TableCommonColumn {
         day181_365 = plus(day181_365, other.day181_365);
         day_lt_365 = plus(day_lt_365, other.day_lt_365);
         day_lt_90_total = plus(day_lt_90_total, other.day_lt_90_total);
-        day_lt_90_ratio = plus(day_lt_90_ratio, other.day_lt_90_ratio);
         overdueTotal = plus(overdueTotal, other.overdueTotal);
+        day_lt_90_ratio = plus(day_lt_90_ratio, other.day_lt_90_ratio);
+        if (day_lt_90_ratio != null) {
+            day_lt_90_ratio /= 2;
+        }
         total = plus(total, other.total);
     }
 }

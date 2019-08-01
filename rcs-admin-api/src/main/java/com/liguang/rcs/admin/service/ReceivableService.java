@@ -68,7 +68,7 @@ public class ReceivableService {
         List<CustomReceivableVO> hwList = buildHwVos(contract);
         CustomReceivableVO netTotal = fillVoList(hwList, entity);
         output.setHwReceivableVOS(hwList);
-        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal).getCode());
+        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal, WriteOffTypeEnum.HARDWARE).getCode());
 
     }
 
@@ -137,7 +137,7 @@ public class ReceivableService {
         List<CustomReceivableVO> serviceKList = buildServiceVos(contract);
         CustomReceivableVO netTotal = fillVoList(serviceKList, entity);
         output.setCommissionReceivableVOS(serviceKList);
-        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal).getCode());
+        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal, WriteOffTypeEnum.SERVICE).getCode());
     }
 
     private CustomReceivableVO buildNetTotal(CustomReceivableVO totalPre,
@@ -250,7 +250,7 @@ public class ReceivableService {
             List<CustomReceivableVO> customVos = buildList(contract, type, unAppliedCashMap.get(contract.getId()));
             keyStrategy.setContract(contract);
             converter.setContract(contract);
-            converter.setActionPlan(ActionPlanEnum.getActionPlan(customVos.get(customVos.size() -1)));
+            converter.setActionPlan(ActionPlanEnum.getActionPlan(customVos.get(customVos.size() -1), type));
             for(CustomReceivableVO vo : customVos) {
                 template.addSingleData(vo);
             }

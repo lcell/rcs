@@ -15,8 +15,10 @@ public abstract  class AbstractCommonConverter {
      * 根据逾期的类型，将逾期的值写入到对应的类型中
      */
     protected void setOverdueAmount(TableCommonColumn vo, String overdueType, Double overdueAmount) {
-        OverdueDateEnum overdueNum = OverdueDateEnum.valueOfCloumn(overdueType);
+        OverdueDateEnum overdueNum = OverdueDateEnum.valueOfColumn(overdueType);
         switch (overdueNum) {
+            case DAY1_5:
+            case DAY6_30:
             case DAY1_30:
                 vo.setDay1_30(plus(vo.getDay1_30(), overdueAmount));
                 break;

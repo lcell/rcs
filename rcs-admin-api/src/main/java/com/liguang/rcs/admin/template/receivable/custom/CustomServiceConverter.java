@@ -18,6 +18,8 @@ public class CustomServiceConverter extends AbstractCommonConverter implements C
         }
         //本期合计为 本期应收
         vo.setReceivablePayment(plus(data.getPayAmount(), vo.getReceivablePayment()));
+
+        vo.setActualPayment(plus(data.getActualPayAmount(), vo.getActualPayment()));
         vo.setTotal(plus(data.getPayAmount(), vo.getTotal()));
         if (!isNullOrZero(data.getOverdueAmount())) { //存在逾期， 将逾期写入到对应的逾期天数条目中
             setOverdueAmount(vo, data.getOverdueNumOfDate(), data.getOverdueAmount());

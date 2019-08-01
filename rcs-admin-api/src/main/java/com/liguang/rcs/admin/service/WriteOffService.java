@@ -12,6 +12,7 @@ import com.liguang.rcs.admin.db.repository.WriteOffRepository;
 import com.liguang.rcs.admin.exception.BaseException;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.ResponseCode;
+import com.liguang.rcs.admin.web.invoice.InvoiceVO;
 import com.liguang.rcs.admin.web.writeoff.CommissionFeeSettlementVO;
 import com.liguang.rcs.admin.web.writeoff.WriteOffSettlementVO;
 import com.liguang.rcs.admin.web.writeoff.WriteOffVO;
@@ -89,55 +90,41 @@ public class WriteOffService {
     }
 
     //TODO 修改成从缓存里面读取
-    //合同生效日期为，第一个发票日期
-    //1. 如果发票金额少于首付，不开始催收
+    //合同生效日期为，第一个发票日期 //暂时不考虑，每期发票开不够后续补齐的场景
+    //1. 分期策略 发票金额 > 当期金额 ？ 合同当前金额 ：发票金额
+    //                剩余发票金额 = 发票金额 - 合同当前金额；
     //2. settlemenetId 生成规则 0，1，2，3，4，5，6 ...
     public List<WriteOffSettlementVO> querySettlement(ContractEntity contract) throws BaseException {
 
-        Multimap<String, InvoiceEntity> invoiceMap = invoiceService.queryRelatedMap(contract.getId(), WriteOffTypeEnum.HARDWARE);
-        //
-        if (invoiceMap == null || invoiceMap.isEmpty()) {
+        List<InvoiceEntity> invoiceList = invoiceService.queryRelatedEntityList(contract.getId(), WriteOffTypeEnum.HARDWARE);
+        if (invoiceList == null || invoiceList.isEmpty()) {
             log.error("[WriteOff] there is no invoice related to contarct, contract:{}", contract);
             return Collections.emptyList();
-            //throw new BaseException(ResponseCode.BAD_ARGUMENT_VALUE);
         }
+        List<WriteOffSettlementVO> settlementList = Lists.newArrayListWithCapacity(contract.getReceivableNum());
         //查询核销记录
         Multimap<String, WriteOffEntity> writeOffMaps = queryWriteOffEntity(contract.getId(), WriteOffTypeEnum.HARDWARE);
-        List<WriteOffSettlementVO> settlementList = Lists.newArrayList();
+        Calendar payDay = calcFirstPayDate(invoiceList.get(0));
 
-        Calendar payDay = calcFirstPayDate(invoiceMap.keySet());
-
-        Double firstMonthPlanPay = calcTotalAmount(invoiceMap.get(DateUtils.toString(payDay.getTime(), "yyyyMM")));
-        Double periodPayment = minus(firstMonthPlanPay, contract.getFirstPayment());
-        Double invoiceAmountTotal = calcTotalAmount(invoiceMap.values()); //发票总额
+        double totalInvoiceAmount = calcTotalAmount(invoiceList);
         Double actualPayAmountTotal = 0d; // 累计支付
-        //如果发票的数据不够首付，则以发票的金额为应收首付
-        if (periodPayment <= 0) {
-            periodPayment = 0d;
-        } else {
-            firstMonthPlanPay = contract.getFirstPayment();
-            periodPayment = periodPayment / contract.getReceivableNum();
+        for (int i = 0 ; i <= contract.getReceivableNum(); i++) {
+            double planPay = contract.getFirstPayment();
+            if (i > 0) {
+                payDay.add(Calendar.MONTH, 1); // 每次累加1
+                planPay = contract.getPeriodPayment();
+            }
+            if (totalInvoiceAmount < planPay) {
+                planPay = totalInvoiceAmount;
+            }
+            totalInvoiceAmount -= planPay;
+            String settlementId = String.valueOf(i);
+            WriteOffSettlementVO vo = buildHWSettlement(contract, payDay, planPay, writeOffMaps.get(settlementId), settlementId);
+            actualPayAmountTotal = plus(actualPayAmountTotal, vo.getActualPayAmount());
+            vo.setAccumulatedPayAmount(actualPayAmountTotal);
+            vo.setReceivableReasonable(totalInvoiceAmount);
+            settlementList.add(vo);
         }
-        WriteOffSettlementVO vo = buildHWSettlement(contract, payDay, firstMonthPlanPay, writeOffMaps.get("0"), "0");
-        actualPayAmountTotal = plus(actualPayAmountTotal, vo.getActualPayAmount());
-        //设置累计支付，剩余应收
-        vo.setAccumulatedPayAmount(actualPayAmountTotal);
-        vo.setReceivableReasonable(minus(invoiceAmountTotal, actualPayAmountTotal));
-        settlementList.add(vo);
-
-        for (int i = 1; i <= contract.getReceivableNum(); i++) {
-            //更新每期应付
-            payDay.add(Calendar.MONTH, 1); // 每次累加1
-            double invoiceTotal = calcTotalAmount(invoiceMap.get(DateUtils.toString(payDay.getTime(), "yyyyMM")));
-            periodPayment += (invoiceTotal / (contract.getReceivableNum() - i + 1));
-            WriteOffSettlementVO tmpVo = buildHWSettlement(contract, payDay, periodPayment, writeOffMaps.get(String.valueOf(i)), String.valueOf(i));
-            //设置累计支付和应收余额
-            actualPayAmountTotal = plus(actualPayAmountTotal, tmpVo.getActualPayAmount());
-            tmpVo.setAccumulatedPayAmount(actualPayAmountTotal);
-            tmpVo.setReceivableReasonable(minus(invoiceAmountTotal, actualPayAmountTotal));
-            settlementList.add(tmpVo);
-        }
-
         return settlementList;
     }
 
@@ -198,19 +185,9 @@ public class WriteOffService {
         }
     }
 
-    private Calendar calcFirstPayDate(Set<String> monthStrs) {
+    private Calendar calcFirstPayDate(InvoiceEntity invoice) {
         Calendar instance = Calendar.getInstance();
-        Date firstPayDay = null;
-        for (String monthStr : monthStrs) {
-            Date tmpDate = DateUtils.softToDate(monthStr, "yyyyMM");
-            if (tmpDate == null) {
-                continue;
-            }
-            if (firstPayDay == null || firstPayDay.getTime() > tmpDate.getTime()) {
-                firstPayDay = tmpDate;
-            }
-        }
-        instance.setTime(firstPayDay);
+        instance.set(instance.get(Calendar.YEAR) - 1, instance.get(Calendar.MONTH) + 1, 0);
         return instance;
     }
 
@@ -280,10 +257,10 @@ public class WriteOffService {
             vo.setReceivableReasonable(overdueAmount); //设置应收金额
             //计算逾期 如果应收金额大于
             if (vo.getReceivableReasonable() > 0) {
-                int deltaDay = DateUtils.dateMinusToNow(vo.getPayDate(), "yyyyMMdd");
+                long deltaDay = DateUtils.dateMinusToNow(vo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             } else {
-                int deltaDay = DateUtils.dateMinusForMonth(payDay,  vo.getPayDate(), "yyyyMMdd");
+                long deltaDay = DateUtils.dateMinus(DateUtils.toString(payDay, "yyyyMMdd"),  vo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             }
             if (overdueType != DAY0) {
@@ -291,74 +268,5 @@ public class WriteOffService {
                 vo.setOverdueAmount(overdueAmount);
             }
         }
-
     }
-
-    /**
-     * 服务费是开了发票之后才开始算得，只会存在当月开当月的服务费发票
-     */
-    private void setOverdueInfo(CommissionFeeSettlementVO vo, List<WriteOffEntity> writeOffEntityList, boolean isLast) throws ParseException {
-        double payment = vo.getPayAmount();
-        WriteOffEntity lastEntity = null;
-        for (WriteOffEntity entity : writeOffEntityList) {
-            if (entity.getPaymentAmount() > 0) {
-                lastEntity = entity;
-            }
-            if (payment <= entity.getPaymentAmount() && !isLast) {
-                entity.setPaymentAmount(entity.getPaymentAmount() - payment);
-                payment = 0;
-                break;
-            }
-            payment -= entity.getPaymentAmount();
-            entity.setPaymentAmount(0d);
-        }
-        //设置实际支付
-        vo.setActualPayAmount(vo.getPayAmount() - payment);
-        //设置支付日期
-        if (lastEntity != null) {
-            //支付日期
-            vo.setPayDate(DateUtils.toString(lastEntity.getPaymentDate(), "yyyyMMdd"));
-        } else {
-            vo.setPayDate("-");
-
-        }
-        //设置逾期日期和金额
-        if (payment <= 0) {
-            //和实际支付日期进行比较
-            int deltaDay = DateUtils.dateMinus(vo.getPayDate(), vo.getActualPayDate(), "yyyyMMdd") - 30;
-            //逾期天数
-            vo.setOverdueNumOfDate(OverdueDateEnum.convertToEnum(deltaDay).getColumn());
-            vo.setOverdueAmount(0d);
-        } else {
-            //和当前时间比较
-            int deltaDay = DateUtils.dateMinusToNow(vo.getPayDate(), "yyyyMMdd") - 30;
-            OverdueDateEnum overdueDate = OverdueDateEnum.convertToEnum(deltaDay);
-            if (overdueDate == DAY0) {
-                //没有超期
-                vo.setOverdueAmount(0d);
-            } else {
-                vo.setOverdueAmount(payment);
-            }
-            vo.setOverdueNumOfDate(overdueDate.getColumn());
-        }
-        //设置应收余额
-        vo.setReceivableReasonable(payment);
-        //设置累计收款
-        vo.setAccumulatedPayAmount(vo.getActualPayAmount());
-    }
-
-
-    /**
-     * 计算每期的应收
-     * 首付月 --- 当月发票 - 首付 / 期数
-     * 其他期   ----- 当月发票 / （期数 - 档期 + 1） 算上本期 + 当前的分期值
-     *
-     */
-
-
-    /**
-     * 计算每期实际到账
-     * 从前往后计算
-     */
-
 }
