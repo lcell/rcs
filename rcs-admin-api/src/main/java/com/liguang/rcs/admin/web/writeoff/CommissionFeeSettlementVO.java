@@ -1,17 +1,19 @@
 package com.liguang.rcs.admin.web.writeoff;
 
 import com.google.common.base.Strings;
+import com.liguang.rcs.admin.common.enumeration.OverdueDateEnum;
+import com.liguang.rcs.admin.util.EnumUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
-import static com.liguang.rcs.admin.util.NumericUtils.plus;
+import static com.liguang.rcs.admin.util.NumericUtils.*;
 
 @Data
 @ApiModel("服务费核销结算")
-public class CommissionFeeSettlementVO {
+public class CommissionFeeSettlementVO implements WriteOffCommon {
     @ApiModelProperty(value = "核销结算ID", dataType = "String")
     private String settlementId;
 
@@ -58,10 +60,19 @@ public class CommissionFeeSettlementVO {
         vo.setOverdueAmount(overdueTotal);
         vo.setReceivableReasonable(receivableTotal);
         vo.setPayAmount(planAmountTotal);
-        if (actualPayTotal != null && planAmountTotal != null && actualPayTotal >= planAmountTotal) {
-            vo.setActualPayDate("已结清");
-        }
+//        if (actualPayTotal != null && planAmountTotal != null && actualPayTotal >= planAmountTotal) {
+//            vo.setActualPayDate("已结清");
+//        }
         return vo;
     }
 
+    @Override
+    public boolean cleanUpFlag() {
+        return isLtZero(minus(payAmount, actualPayAmount));
+    }
+
+    @Override
+    public OverdueDateEnum overDateEnum() {
+        return EnumUtils.findByCode(OverdueDateEnum.values(), overdueNumOfDate);
+    }
 }

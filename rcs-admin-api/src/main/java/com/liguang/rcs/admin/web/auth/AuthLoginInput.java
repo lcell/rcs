@@ -10,9 +10,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@ApiModel(description = "login info")
+@ApiModel("登录信息")
 public class AuthLoginInput {
-    @ApiModelProperty(value = "用户名")
+    @ApiModelProperty(value = "账号")
     private String username;
     @ApiModelProperty(value = "用户密码")
     private String password;

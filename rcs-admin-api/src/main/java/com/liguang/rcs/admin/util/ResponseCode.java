@@ -1,7 +1,10 @@
 package com.liguang.rcs.admin.util;
 
 public enum  ResponseCode {
+    USER_LOCKED_ACCOUNT("601","用户账户被锁定"),
     USER_INVALID_ACCOUNT("605","用户帐号或密码不正确"),
+
+    USER_INVALID_PASSWORD("606","旧密码不正确"),
 
     BAD_ARGUMENT("401", "参数不对"),
     BAD_ARGUMENT_VALUE("402", "参数值不对"),

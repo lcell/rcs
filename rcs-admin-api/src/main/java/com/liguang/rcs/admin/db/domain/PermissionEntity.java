@@ -10,8 +10,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rcs_permission")
 public class PermissionEntity extends AbstractEntity {
+
     @Column(name = "role_id")
     private Long roleId;//角色id
+    
     @Column(name = "permission")
     private String permission;//权限
 }

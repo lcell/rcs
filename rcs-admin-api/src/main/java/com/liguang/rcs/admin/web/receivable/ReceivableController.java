@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.liguang.rcs.admin.util.NumericUtils.plus;
+
 @Api(tags = "应收管理API")
 @RequestMapping("/rcs/receivable")
 @RestController
@@ -63,9 +65,11 @@ public class ReceivableController {
 
     @PostMapping("/updateCustomCommission")
     @ApiOperation("更新客户服务费手动核实到账")
-    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomReceivableVO customCommissionReceivableVO) {
+    public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomReceivableVO vo) {
         try {
-            UnAppliedCashEntity entity = customCommissionReceivableVO.toEntity();
+            //计算一下1-30的数据, 服务费没有1-30这个分类，因此需要加上
+            vo.setDay1_30(plus(vo.getDay1_5(), vo.getDay6_30()));
+            UnAppliedCashEntity entity = vo.toEntity();
             entity.setWriteOffType(WriteOffTypeEnum.SERVICE);
             receivableService.saveUnAppliedCash(entity);
             return ResponseObject.success();

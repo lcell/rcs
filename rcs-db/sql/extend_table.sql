@@ -8,6 +8,8 @@ CREATE TABLE `rcs_unapplied_cache` (
   `actual_pay_amount` double(16,2)  DEFAULT NULL COMMENT '实际支付',
   `unoverdue_amount` double(16,2) DEFAULT NULL COMMENT '未逾期',
 
+  `day1_5` double(16,2)  DEFAULT NULL COMMENT '逾期1-5天',
+  `day6_30` double(16,2)  DEFAULT NULL COMMENT '逾期6-30天',
   `day1_30` double(16,2)  DEFAULT NULL COMMENT '逾期1-30天',
   `day31_60` double(16,2)  DEFAULT NULL COMMENT '逾期31-60天',
   `day61_90` double(16,2) DEFAULT NULL COMMENT '逾期61-90天',

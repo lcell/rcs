@@ -2,6 +2,7 @@ package com.liguang.rcs.admin.web.writeoff;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.liguang.rcs.admin.common.enumeration.ActionPlanEnum;
 import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
@@ -46,7 +47,7 @@ public class WriteOffController {
             @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
     )
     @GetMapping("/querySettlementByContractId/{contractId}")
-    public ResponseObject<List<WriteOffSettlementVO>> querySettlementByContractId(@PathVariable("contractId") String contractId) {
+    public ResponseObject<QuerySettlementOutput> querySettlementByContractId(@PathVariable("contractId") String contractId) {
         Long contractIdLong = null;
         ContractEntity contract = null;
         if ((contractIdLong = NumericUtils.toLong(contractId)) == null
@@ -55,11 +56,14 @@ public class WriteOffController {
             return ResponseObject.dataNotExist();
         }
         try {
+            QuerySettlementOutput output = new QuerySettlementOutput();
             List<WriteOffSettlementVO> settlementVOS = writeOffService.querySettlement(contract);
+            output.setActionPlan(ActionPlanEnum.getActionPlan(settlementVOS, WriteOffTypeEnum.HARDWARE).getCode());
             if (settlementVOS != null && !settlementVOS.isEmpty()) {
                 settlementVOS.add(WriteOffSettlementVO.buildTotal(settlementVOS));
             }
-            return ResponseObject.success(settlementVOS);
+            output.setDataList(settlementVOS);
+            return ResponseObject.success(output);
         } catch (BaseException e) {
             log.error("[WriteOff] Inner Err, Exception:{}", e);
             return ResponseObject.fail(e.getCode(), e.getMessage());
@@ -85,8 +89,8 @@ public class WriteOffController {
                 .stream()
                 .filter(record -> Strings.isNullOrEmpty(record.getContractId()) ||
                         (record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
-                        && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
-                        && record.getSettlementId().equals(params.getSettlementId())))//关联的合同期号和当前相同
+                                && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
+                                && record.getSettlementId().equals(params.getSettlementId())))//关联的合同期号和当前相同
                 .collect(Collectors.toList())
         );
     }
@@ -217,7 +221,7 @@ public class WriteOffController {
             @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
     )
     @GetMapping("/queryCommissionByContractId/{contractId}")
-    public ResponseObject<List<CommissionFeeSettlementVO>> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
+    public ResponseObject<QueryCommissionFeeSettlementOutput> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
         Long contractIdLong = null;
         ContractEntity contract = null;
         if ((contractIdLong = NumericUtils.toLong(contractId)) == null
@@ -226,11 +230,14 @@ public class WriteOffController {
             return ResponseObject.dataNotExist();
         }
         try {
+            QueryCommissionFeeSettlementOutput output = new QueryCommissionFeeSettlementOutput();
             List<CommissionFeeSettlementVO> commissionFeeSettlementVOS = writeOffService.queryCommissionByContractId(contract);
+            output.setActionPlan(ActionPlanEnum.getActionPlan(commissionFeeSettlementVOS, WriteOffTypeEnum.SERVICE).getCode());
             if (commissionFeeSettlementVOS != null && !commissionFeeSettlementVOS.isEmpty()) {
                 commissionFeeSettlementVOS.add(CommissionFeeSettlementVO.buildTotal(commissionFeeSettlementVOS));
             }
-            return ResponseObject.success(commissionFeeSettlementVOS);
+            output.setDataList(commissionFeeSettlementVOS);
+            return ResponseObject.success(output);
         } catch (Exception e) {
             log.error("[WriteOff] Inner Err, Exception:", e);
             return ResponseObject.serious();

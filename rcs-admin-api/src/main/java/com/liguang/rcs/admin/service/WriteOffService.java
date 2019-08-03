@@ -12,7 +12,6 @@ import com.liguang.rcs.admin.db.repository.WriteOffRepository;
 import com.liguang.rcs.admin.exception.BaseException;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.ResponseCode;
-import com.liguang.rcs.admin.web.invoice.InvoiceVO;
 import com.liguang.rcs.admin.web.writeoff.CommissionFeeSettlementVO;
 import com.liguang.rcs.admin.web.writeoff.WriteOffSettlementVO;
 import com.liguang.rcs.admin.web.writeoff.WriteOffVO;
@@ -177,7 +176,7 @@ public class WriteOffService {
                 overdueType = OverdueDateEnum.convertToEnumByMonth(deltaMonth);
             }
             if (overdueType != DAY0) {
-                vo.setOverdueNumOfDate(overdueType.getColumn());
+                vo.setOverdueNumOfDate(overdueType.getCode());
                 if (overdueAmount > 0) {
                     vo.setOverdueAmount(overdueAmount);
                 }
@@ -264,7 +263,7 @@ public class WriteOffService {
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             }
             if (overdueType != DAY0) {
-                vo.setOverdueNumOfDate(overdueType.getColumn());
+                vo.setOverdueNumOfDate(overdueType.getCode());
                 vo.setOverdueAmount(overdueAmount);
             }
         }

@@ -27,8 +27,8 @@ import java.util.*;
 import static com.liguang.rcs.admin.util.ResponseCode.USER_INVALID_ACCOUNT;
 
 @RestController
-@RequestMapping("admin/auth")
-@Api(tags = "用户鉴权API")
+@RequestMapping("rcs/auth")
+@Api(tags = "用户鉴权管理")
 @Validated
 public class AdminAuthController {
     private static final Log LOG = LogFactory.getLog(AdminAuthController.class);
@@ -47,14 +47,14 @@ public class AdminAuthController {
      */
     @PostMapping("/login")
     @ApiOperation(value = "用户登录")
-    public Object login(@RequestBody AuthLoginInput input) {
+    public ResponseObject login(@RequestBody AuthLoginInput input) {
 
         if (StringUtils.isEmpty(input.getUsername()) || StringUtils.isEmpty(input.getPassword())) {
             return ResponseObject.badArgument();
         }
         Subject currentUser = SecurityUtils.getSubject();
         try {
-            currentUser.login(new UsernamePasswordToken(input.getUsername(), input.getPassword()));
+                currentUser.login(new UsernamePasswordToken(input.getUsername(), input.getPassword()));
         } catch (UnknownAccountException uae) {
             return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "用户帐号或密码不正确");
         } catch (LockedAccountException lae) {
@@ -63,8 +63,7 @@ public class AdminAuthController {
         } catch (AuthenticationException ae) {
             return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "认证失败");
         }
-        currentUser = SecurityUtils.getSubject();
-        return ResponseObject.success(currentUser.getSession().getId());
+        return ResponseObject.success(SecurityUtils.getSubject().getSession().getId());
     }
 
     @PostMapping("/logout")
@@ -83,7 +82,8 @@ public class AdminAuthController {
         if(user == null) {
             return ResponseObject.unlogin();
         }
-        return ResponseUtil.ok(new AccountVO(user));
+        //返回权限信息
+        return ResponseUtil.ok(AccountVO.buildFrom(user));
     }
 
     //返回当前用户的权限值

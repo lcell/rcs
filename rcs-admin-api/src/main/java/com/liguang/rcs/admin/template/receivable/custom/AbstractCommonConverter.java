@@ -18,7 +18,13 @@ public abstract  class AbstractCommonConverter {
         OverdueDateEnum overdueNum = OverdueDateEnum.valueOfColumn(overdueType);
         switch (overdueNum) {
             case DAY1_5:
+                vo.setDay1_5(plus(vo.getDay1_5(), overdueAmount));
+                vo.setDay1_30(plus(vo.getDay1_30(), overdueAmount));
+                break;
             case DAY6_30:
+                vo.setDay6_30(plus(vo.getDay6_30(), overdueAmount));
+                vo.setDay1_30(plus(vo.getDay1_30(), overdueAmount));
+                break;
             case DAY1_30:
                 vo.setDay1_30(plus(vo.getDay1_30(), overdueAmount));
                 break;

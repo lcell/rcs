@@ -62,12 +62,12 @@ public class ContractVO {
     @NotNull(message = "联系人不可为空")
     private String contactName;
     @ApiModelProperty(value = "联系手机号码", required = true, dataType = "String")
-    @CopyProperty(targetField = "tel")
+    @CopyProperty
     @NotNull(message = "联系手机号码不可为空")
     private String tel;
     @ApiModelProperty(value = "联系邮箱", required = true, dataType = "String")
     @NotNull(message = "联系邮箱不可为空")
-    @CopyProperty(targetField = "email")
+    @CopyProperty
     private String email;
 
 
@@ -96,10 +96,6 @@ public class ContractVO {
     @NotNull(message = "销售经理编号不可为空")
     private String salesNo;
 
-//
-//    @ApiModelProperty(value = "合同文件", required = true, dataType = "File")
-//    @NotNull(message = "合同文件不可为空")
-//    private MultipartFile file;
 
     /**
      * 通过entity生成vo对象

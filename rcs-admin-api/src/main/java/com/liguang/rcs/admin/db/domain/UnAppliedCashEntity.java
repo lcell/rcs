@@ -22,6 +22,10 @@ public class UnAppliedCashEntity extends AbstractEntity {
     private Double actualPayAmount;//实际支付
     @Column(name = "unoverdue_amount")
     private Double unOverdueAmount; //未逾期
+    @Column(name = "day1_5")
+    private Double day1_5; //逾期1-5天
+    @Column(name = "day6_30")
+    private Double day6_30; //逾期6-30天
     @Column(name = "day1_30")
     private Double day1_30; //逾期1-30天
     @Column(name = "day31_60")

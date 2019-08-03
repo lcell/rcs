@@ -27,12 +27,14 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
-        filterChainDefinitionMap.put("admin/auth/login", "anon");
-        filterChainDefinitionMap.put("admin/auth/401", "anon");
-        filterChainDefinitionMap.put("admin/auth/index", "anon");
-        filterChainDefinitionMap.put("admin/auth/403", "anon");
-        filterChainDefinitionMap.put("admin/index/index", "anon");
+        filterChainDefinitionMap.put("rcs/auth/login", "anon");
+        filterChainDefinitionMap.put("rcs/auth/401", "anon");
+        filterChainDefinitionMap.put("rcs/auth/index", "anon");
+        filterChainDefinitionMap.put("rcs/auth/403", "anon");
+        filterChainDefinitionMap.put("rcs/index/index", "anon");
         filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        //先不用鉴权
+        filterChainDefinitionMap.put("rcs/**", "anon");
 
         filterChainDefinitionMap.put("admin/**", "authc");
         shiroFilterFactoryBean.setLoginUrl("admin/auth/401");

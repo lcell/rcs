@@ -79,6 +79,17 @@ public class NumericUtils {
         return double1 + double2;
     }
 
+    public static Double div(Double double1, Double double2) {
+        if (double2 == 0) {
+            return 1D;
+        }
+        return formatDouble(double1 / double2, 2);
+    }
+
+    public static boolean isLtZero(Double minus) {
+        return isNullOrZero(minus) || minus < 0;
+    }
+
     public static Double formatDouble(Double double1, int scale) {
         if (isNullOrZero(double1)) {
             return 0d;
@@ -117,4 +128,5 @@ public class NumericUtils {
     public static boolean isNullOrZero(Number num) {
         return num == null || num.doubleValue() == 0;
     }
+
 }

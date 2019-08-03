@@ -1,6 +1,9 @@
 package com.liguang.rcs.admin.db.domain;
 
+import com.liguang.rcs.admin.web.account.AccountVO;
 import lombok.Data;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -27,10 +30,23 @@ public abstract class AbstractEntity {
     public void prePersist() {
         this.createDate = new Timestamp(Calendar.getInstance().getTimeInMillis());
         this.updateDate = this.createDate;
+        this.updateBy = currentUserName();
+        this.createBy = updateBy;
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updateDate = new Timestamp(Calendar.getInstance().getTimeInMillis());
+        this.updateBy = currentUserName();
+    }
+
+    private String currentUserName() {
+        Subject subject = SecurityUtils.getSubject();
+        Object principal = subject.getPrincipal();
+        if (principal instanceof AccountVO) {
+            return ((AccountVO)principal).getName();
+        }
+        //系统内部的数据库操作，标记为system
+        return "system";
     }
 }
