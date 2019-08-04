@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
@@ -53,7 +52,7 @@ public class ContractVO {
     @NotNull(message = "合同生效日期不可为空")
     private String effectiveDate;
 
-    @ApiModelProperty(value = "合同状态", required = true, dataType = "String")
+    @ApiModelProperty(value = "合同状态 0-normal 1-legal 2-3rd party", required = true, dataType = "String")
     @CopyProperty(targetField = "status", typeCovertClass = StringToIEnumConverter.class, extClass= ContractStatusEnum.class)
     @NotNull(message = "合同状态不可为空")
     private String status;
@@ -70,21 +69,27 @@ public class ContractVO {
 
     @ApiModelProperty(value = "应收期数", required = true, dataType = "String")
     @CopyProperty(targetField = "receivableNum", typeCovertClass = StringToNumberConverter.class, extClass = Integer.class)
-    @NotNull(message = "应收期数不可为空")
+//    @NotNull(message = "应收期数不可为空")
     private String receivableNum;
 
     @ApiModelProperty(value = "首付款", required = true, dataType = "String")
     @CopyProperty(targetField = "firstPayment", typeCovertClass = StringToNumberConverter.class, extClass = Double.class)
-    @NotNull(message = "首付款不可为空")
+//    @NotNull(message = "首付款不可为空")
     private String firstPayment;
 
     @ApiModelProperty(value = "每期应付", required = true, dataType = "String")
     @CopyProperty(targetField = "periodPayment", typeCovertClass = StringToNumberConverter.class, extClass = Double.class)
-    @NotNull(message = "每期应付不可为空")
+//    @NotNull(message = "每期应付不可为空")
     private String periodPayment;
 
+
+    @ApiModelProperty(value = "销售经理名称", required = true, dataType = "String")
+    @CopyProperty
+    @NotNull(message = "销售经理名称不可为空")
+    private String salesName;
+
     @ApiModelProperty(value = "销售经理编号", required = true, dataType = "String")
-    @CopyProperty(targetField = "salesNo")
+    @CopyProperty
     @NotNull(message = "销售经理编号不可为空")
     private String salesNo;
 

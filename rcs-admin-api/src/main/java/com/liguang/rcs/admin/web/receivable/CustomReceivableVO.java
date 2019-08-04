@@ -2,15 +2,11 @@ package com.liguang.rcs.admin.web.receivable;
 
 import com.liguang.rcs.admin.common.copy.BeanUtils;
 import com.liguang.rcs.admin.common.copy.CopyProperty;
-import com.liguang.rcs.admin.common.copy.EnableCopyProperties;
 import com.liguang.rcs.admin.common.copy.converter.StringToNumberConverter;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
-import com.liguang.rcs.admin.common.enumeration.converter.StringToIEnumConverter;
 import com.liguang.rcs.admin.db.domain.UnAppliedCashEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;

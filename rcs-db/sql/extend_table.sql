@@ -22,7 +22,6 @@ CREATE TABLE `rcs_unapplied_cache` (
   `overdue_total` double(16,2) DEFAULT NULL COMMENT '逾期合计',
   `total` double(16,2)  DEFAULT NULL COMMENT '本期合计',
 
-  `write_off_type` varchar(10) DEFAULT NULL COMMENT '关联的核销类型',
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
   `create_date` datetime DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',

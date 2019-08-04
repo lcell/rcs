@@ -1,23 +1,18 @@
 package com.liguang.rcs.admin.web.invoice;
 
 import com.google.common.base.Strings;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.service.InvoiceService;
 import com.liguang.rcs.admin.util.DateUtils;
-import com.liguang.rcs.admin.util.EnumUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
-import com.liguang.rcs.admin.web.contract.ContractVO;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequestMapping("/rcs/invoice")
 @Api(tags = "发票管理API")
@@ -55,18 +50,15 @@ public class InvoiceController {
     @ApiModelProperty("根据合同编号和类型查询已关联的发票列表")
     @GetMapping("/queryRelatedInvoice")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contractId")
+            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String")
     })
-    public ResponseObject<List<InvoiceVO>> queryRelatedInvoice(@RequestParam("contractId") String contractId,
-                                                               @RequestParam("type") String type) {
-        Long contractIdLong = null;
-        WriteOffTypeEnum writeOffType = null;
-        if((contractIdLong = NumericUtils.toLong(contractId)) == null
-                || (writeOffType = EnumUtils.findByCode(WriteOffTypeEnum.values(), type) ) == null) {
-            log.error("[Invoice] param is invalid, contractId:{}, type:{}", contractId, type);
+    public ResponseObject<List<InvoiceVO>> queryRelatedInvoice(@RequestParam("contractId") String contractId) {
+        Long contractIdLong;
+        if((contractIdLong = NumericUtils.toLong(contractId)) == null) {
+            log.error("[Invoice] param is invalid, contractId:{}", contractId);
             return ResponseObject.badArgumentValue();
         }
-        return ResponseObject.success(invoiceService.queryRelatedList(contractIdLong, writeOffType));
+        return ResponseObject.success(invoiceService.queryRelatedList(contractIdLong));
     }
 
     @ApiOperation("创建或修改发票信息 for Test")
@@ -95,7 +87,7 @@ public class InvoiceController {
         }
         try {
             vo.check();
-            invoiceService.relationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds(), vo.checkAndGetType());
+            invoiceService.relationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds());
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[Invoice] Inner Err, Exception:{}", ex);
@@ -112,7 +104,7 @@ public class InvoiceController {
         }
         try {
             vo.check();
-            invoiceService.unRelationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds(), vo.checkAndGetType());
+            invoiceService.unRelationToContract(vo.checkAndGetContractId(), vo.checkAndGetInvoiceIds());
             return ResponseObject.success();
         } catch (Exception ex) {
             log.error("[Invoice] Inner Err, Exception:{}", ex);

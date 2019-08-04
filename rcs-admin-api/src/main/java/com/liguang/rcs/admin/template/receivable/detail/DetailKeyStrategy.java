@@ -6,7 +6,6 @@ import com.liguang.rcs.admin.common.Constant;
 import com.liguang.rcs.admin.common.template.KeyStrategy;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.web.receivable.CustomReceivableVO;
-import com.liguang.rcs.admin.web.receivable.TableCommonColumn;
 
 import java.util.Collections;
 import java.util.List;

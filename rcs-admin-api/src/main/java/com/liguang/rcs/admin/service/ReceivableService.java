@@ -3,7 +3,7 @@ package com.liguang.rcs.admin.service;
 import com.google.common.collect.Maps;
 import com.liguang.rcs.admin.common.Constant;
 import com.liguang.rcs.admin.common.enumeration.ActionPlanEnum;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
+import com.liguang.rcs.admin.common.enumeration.ContractTypeEnum;
 import com.liguang.rcs.admin.common.template.Template;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.domain.UnAppliedCashEntity;
@@ -30,7 +30,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +54,8 @@ public class ReceivableService {
      * 2. 根据每个合同查询核销记录数据
      * 3. 生成对应的报表统计数据
      */
-    public CustomHwOutput queryCustomHw(CustomQueryConditionParam param) throws BaseException {
+    public CustomHwOutput queryCustomHw(ContractEntity contract) throws BaseException {
         CustomHwOutput output = new CustomHwOutput();
-        ContractEntity contract = findOneContract(param);
         output.setContractId(contract.getId().toString());
         output.setContractNo(contract.getContractNo());
         fillHwOutput(contract, output);
@@ -64,11 +66,11 @@ public class ReceivableService {
      * 硬件分期 模版
      */
     private void fillHwOutput(ContractEntity contract, CustomHwOutput output) throws BaseException {
-        UnAppliedCashEntity entity = queryUnAppliedCash(contract.getId(), WriteOffTypeEnum.HARDWARE);
+        UnAppliedCashEntity entity = queryUnAppliedCash(contract.getId());
         List<CustomReceivableVO> hwList = buildHwVos(contract);
         CustomReceivableVO netTotal = fillVoList(hwList, entity);
         output.setHwReceivableVOS(hwList);
-        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal, WriteOffTypeEnum.HARDWARE).getCode());
+        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal).getCode());
 
     }
 
@@ -88,7 +90,7 @@ public class ReceivableService {
         return netTotal;
     }
 
-    public List<CustomReceivableVO> buildHwVos(ContractEntity contract) throws BaseException {
+    private List<CustomReceivableVO> buildHwVos(ContractEntity contract) throws BaseException {
         List<WriteOffSettlementVO> settlementList = writeOffService.querySettlement(contract); //按照时间升序排
         CustomHWKeyStrategy keyStrategy = new CustomHWKeyStrategy(getFirstMonth(settlementList));
         CustomHWConverter converter = new CustomHWConverter();
@@ -110,34 +112,21 @@ public class ReceivableService {
         return DateUtils.softToDate(settlementList.get(0).getPayMonth(), "yyyyMM");
     }
 
-    public CustomCommissionOutput queryCustomCommission(CustomQueryConditionParam param) throws BaseException {
+    public CustomCommissionOutput queryCustomCommission(ContractEntity contract) throws BaseException {
         CustomCommissionOutput output = new CustomCommissionOutput();
-        ContractEntity contract = findOneContract(param);
         output.setContractId(contract.getId().toString());
         output.setContractNo(contract.getContractNo());
         fillCommissionOutput(contract, output);
         return output;
     }
 
-    private ContractEntity findOneContract(CustomQueryConditionParam param) throws BaseException {
-        QueryParams queryContractParam = buildContractParams(param);
-        List<ContractEntity> contractList = contractService.queryAll(queryContractParam);
-        if (contractList == null || contractList.isEmpty()) {
-            log.error("[Receivable] contract is not exist, params:{}", param);
-            throw new BaseException(ResponseCode.NOT_EXIST);
-        }
-        if (contractList.size() > 1) {
-            log.warn("[Receivable] contract is more than one, just chose firstOne, contractList:{}", contractList);
-        }
-        return contractList.get(0);
-    }
 
     private void fillCommissionOutput(ContractEntity contract, CustomCommissionOutput output) throws BaseException{
-        UnAppliedCashEntity entity = queryUnAppliedCash(contract.getId(), WriteOffTypeEnum.SERVICE);
+        UnAppliedCashEntity entity = queryUnAppliedCash(contract.getId());
         List<CustomReceivableVO> serviceKList = buildServiceVos(contract);
         CustomReceivableVO netTotal = fillVoList(serviceKList, entity);
         output.setCommissionReceivableVOS(serviceKList);
-        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal, WriteOffTypeEnum.SERVICE).getCode());
+        output.setActionPlan(ActionPlanEnum.getActionPlan(netTotal).getCode());
     }
 
     private CustomReceivableVO buildNetTotal(CustomReceivableVO totalPre,
@@ -152,7 +141,7 @@ public class ReceivableService {
         return vo;
     }
 
-    public List<CustomReceivableVO> buildServiceVos(ContractEntity contract) throws BaseException {
+    private List<CustomReceivableVO> buildServiceVos(ContractEntity contract) throws BaseException {
         List<CommissionFeeSettlementVO> commissionVOS = writeOffService.queryCommissionByContractId(contract);
         CustomServiceKeyStrategy keyStrategy = new CustomServiceKeyStrategy(getFirstDay(commissionVOS));
         CustomServiceConverter converter = new CustomServiceConverter();
@@ -174,49 +163,33 @@ public class ReceivableService {
         return commissionVOS.get(0).getPayDate();
     }
 
-    public UnAppliedCashEntity queryUnAppliedCash(Long contractId, WriteOffTypeEnum writeOffTypeEnum) {
+    private UnAppliedCashEntity queryUnAppliedCash(Long contractId) {
         Timestamp now = DateUtils.softToTimestamp(
                 DateUtils.toString(Calendar.getInstance().getTime(), "yyyyMMdd"), "yyyyMMdd");
-        return unAppliedCashRepository.findByRefContractIdAndWriteOffTypeAndCreateDateAfter(contractId, writeOffTypeEnum, now);
+        return unAppliedCashRepository.findByRefContractIdAndCreateDateAfter(contractId, now);
     }
 
-    public Map<Long, UnAppliedCashEntity> queryUnAppliedCash(List<Long> contractIds, @NotNull WriteOffTypeEnum writeOffTypeEnum) {
+    private Map<Long, UnAppliedCashEntity> queryUnAppliedCash(List<Long> contractIds) {
         Map<Long, UnAppliedCashEntity> entityMap = Maps.newHashMap();
         Timestamp now = DateUtils.softToTimestamp(
                 DateUtils.toString(Calendar.getInstance().getTime(), "yyyyMMdd"), "yyyyMMdd");
-        List<UnAppliedCashEntity> lst = unAppliedCashRepository.findByRefContractIdInAndWriteOffTypeAndCreateDateAfter(contractIds, writeOffTypeEnum, now);
+        List<UnAppliedCashEntity> lst = unAppliedCashRepository.findByRefContractIdInAndCreateDateAfter(contractIds, now);
         for (UnAppliedCashEntity entity : lst) {
             entityMap.putIfAbsent(entity.getRefContractId(), entity);
         }
         return entityMap;
     }
 
-    private QueryParams buildContractParams(CustomQueryConditionParam params) {
-        QueryParams queryParams = new QueryParams();
-        //TODO
-        queryParams.setContractNo(params.getContractNo());
-        queryParams.setCustomId(params.getCustomNo());
-        queryParams.setStartDate(params.getBeginDate());
-        queryParams.setEndDate(DateUtils.toString(Calendar.getInstance().getTime(), "yyyy-MM-dd"));
-        return queryParams;
-
-    }
-
     public void saveUnAppliedCash(UnAppliedCashEntity entity) {
         unAppliedCashRepository.save(entity);
     }
 
-    public List<ReceivableSummaryVo> queryReceivableSummary(QuerySummaryParam param, @Nullable WriteOffTypeEnum type) throws BaseException {
-        List<ContractEntity> contractList = contractService.queryAll(buildContractParams(param));
+    public List<ReceivableSummaryVo> queryReceivableSummary(QuerySummaryParam param, @Nullable ContractTypeEnum type) throws BaseException {
+        List<ContractEntity> contractList = contractService.queryAll(buildContractParams(param, type));
         SummaryKeyStrategy keyStrategy = new SummaryKeyStrategy();
         SummaryConverter converter = new SummaryConverter();
         Template<CustomReceivableVO, ReceivableSummaryVo> template = new Template<>(keyStrategy, converter);
-        if (type == null || type == WriteOffTypeEnum.HARDWARE) {
-            fillSummaryTemplate(contractList, template,  WriteOffTypeEnum.HARDWARE);
-        }
-        if (type == null || type == WriteOffTypeEnum.SERVICE) {
-            fillSummaryTemplate(contractList, template,  WriteOffTypeEnum.SERVICE);
-        }
+        fillSummaryTemplate(contractList, template);
         return template.buildDataList(key -> {
             ReceivableSummaryVo vo = new ReceivableSummaryVo();
             vo.setNPer(key);
@@ -224,12 +197,11 @@ public class ReceivableService {
         });
     }
 
-    private void fillSummaryTemplate(List<ContractEntity> contractList, Template<CustomReceivableVO, ?> template,
-                                     @NotNull WriteOffTypeEnum type) throws BaseException {
-        Map<Long, UnAppliedCashEntity> unAppliedCashMap = queryUnAppliedCash(contractList.stream().map(ContractEntity::getId).collect(Collectors.toList()), type);
+    private void fillSummaryTemplate(List<ContractEntity> contractList, Template<CustomReceivableVO, ?> template) throws BaseException {
+        Map<Long, UnAppliedCashEntity> unAppliedCashMap = queryUnAppliedCash(contractList.stream().map(ContractEntity::getId).collect(Collectors.toList()));
         SummaryKeyStrategy keyStrategy = template.getKeyStrategy();
         for (ContractEntity contract : contractList) {
-            List<CustomReceivableVO> customVos = buildList(contract, type, unAppliedCashMap.get(contract.getId()));
+            List<CustomReceivableVO> customVos = buildList(contract, unAppliedCashMap.get(contract.getId()));
             keyStrategy.setContract(contract);
             for(CustomReceivableVO vo : customVos) {
                 template.addSingleData(vo);
@@ -238,19 +210,17 @@ public class ReceivableService {
 
     }
 
-
-
-    public List<ReceivableDetailVo> queryReceivableDetail(QuerySummaryParam param, @NotNull  WriteOffTypeEnum type) throws BaseException {
-        List<ContractEntity> contractList = contractService.queryAll(buildContractParams(param));
+    public List<ReceivableDetailVo> queryReceivableDetail(QuerySummaryParam param, @NotNull  ContractTypeEnum type) throws BaseException {
+        List<ContractEntity> contractList = contractService.queryAll(buildContractParams(param, type));
         DetailKeyStrategy keyStrategy = new DetailKeyStrategy();
         DetailConverter converter = new DetailConverter();
         Template<CustomReceivableVO, ReceivableDetailVo> template = new Template<>(keyStrategy, converter);
-        Map<Long, UnAppliedCashEntity> unAppliedCashMap = queryUnAppliedCash(contractList.stream().map(ContractEntity::getId).collect(Collectors.toList()), type);
+        Map<Long, UnAppliedCashEntity> unAppliedCashMap = queryUnAppliedCash(contractList.stream().map(ContractEntity::getId).collect(Collectors.toList()));
         for (ContractEntity contract : contractList) {
-            List<CustomReceivableVO> customVos = buildList(contract, type, unAppliedCashMap.get(contract.getId()));
+            List<CustomReceivableVO> customVos = buildList(contract, unAppliedCashMap.get(contract.getId()));
             keyStrategy.setContract(contract);
             converter.setContract(contract);
-            converter.setActionPlan(ActionPlanEnum.getActionPlan(customVos.get(customVos.size() -1), type));
+            converter.setActionPlan(ActionPlanEnum.getActionPlan(customVos.get(customVos.size() -1)));
             for(CustomReceivableVO vo : customVos) {
                 template.addSingleData(vo);
             }
@@ -263,21 +233,24 @@ public class ReceivableService {
         });
     }
 
-    private List<CustomReceivableVO> buildList(ContractEntity contract, WriteOffTypeEnum type, UnAppliedCashEntity unAppliedCash) throws BaseException {
+    private List<CustomReceivableVO> buildList(ContractEntity contract, UnAppliedCashEntity unAppliedCash) throws BaseException {
         List<CustomReceivableVO> customVos;
-        if (type == WriteOffTypeEnum.SERVICE) {
-            customVos = buildServiceVos(contract);
-        } else {
+        if (contract.getType() == ContractTypeEnum.HARDWARE) {
             customVos = buildHwVos(contract);
+        } else {
+            customVos = buildServiceVos(contract);
         }
         fillVoList(customVos, unAppliedCash);
         return customVos;
     }
 
-    private QueryParams buildContractParams(QuerySummaryParam params) {
+    private QueryParams buildContractParams(QuerySummaryParam params, ContractTypeEnum contractType) {
         QueryParams queryParams = new QueryParams();
-        //TODO
+        queryParams.setStatus(params.getContractStatus());
+        queryParams.setProductType(params.getProductType());
+        queryParams.setSalesName(params.getSalesName());
         queryParams.setStartDate(params.getBeginDate());
+        queryParams.setType(contractType.getCode());
         queryParams.setEndDate(DateUtils.toString(Calendar.getInstance().getTime(), "yyyy-MM-dd"));
         return queryParams;
     }

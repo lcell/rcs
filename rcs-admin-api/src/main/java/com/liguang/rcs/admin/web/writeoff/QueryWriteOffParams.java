@@ -15,9 +15,9 @@ public class QueryWriteOffParams {
 
     @ApiModelProperty(value = "核销结算ID", dataType = "String")
     private String settlementId;
-
-    @ApiModelProperty(value = "核销结算类型，0-分期 1-服务费", dataType = "String")
-    private String writeOffType;
+//
+//    @ApiModelProperty(value = "核销结算类型，0-硬件 1-服务费", dataType = "String")
+//    private String writeOffType;
 
     @ApiModelProperty(value = "合同ID", dataType = "String")
     private String contractId;

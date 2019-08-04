@@ -8,7 +8,6 @@ import com.liguang.rcs.admin.service.PermissionService;
 import com.liguang.rcs.admin.service.RoleService;
 import com.liguang.rcs.admin.util.CollectionUtils;
 import com.liguang.rcs.admin.util.bcrypt.BCryptPasswordEncoder;
-import com.liguang.rcs.admin.web.account.AccountVO;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;

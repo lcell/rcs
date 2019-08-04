@@ -5,8 +5,6 @@ import com.liguang.rcs.admin.common.copy.CopyProperty;
 import com.liguang.rcs.admin.common.copy.EnableCopyProperties;
 import com.liguang.rcs.admin.common.copy.converter.StringToNumberConverter;
 import com.liguang.rcs.admin.common.copy.converter.StringToTimestampConverter;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
-import com.liguang.rcs.admin.common.enumeration.converter.StringToIEnumConverter;
 import com.liguang.rcs.admin.db.domain.WriteOffEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,9 +47,9 @@ public class WriteOffVO {
     @CopyProperty(targetField = "refContractId", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
     private String contractId;
 
-    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
-    @CopyProperty(targetField = "type", typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
-    private String type;
+//    @ApiModelProperty(value = "核销类型， 0-硬件 1-服务", dataType = "String")
+//    @CopyProperty(targetField = "type", typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
+//    private String type;
     @ApiModelProperty(value = "核销记录ID", dataType = "String")
     @CopyProperty(targetField = "id", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
     private String writeOffId;

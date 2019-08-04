@@ -4,7 +4,6 @@ import com.liguang.rcs.admin.util.CollectionUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
 import com.liguang.rcs.admin.web.receivable.TableCommonColumn;
 import com.liguang.rcs.admin.web.writeoff.WriteOffCommon;
-import com.liguang.rcs.admin.web.writeoff.WriteOffSettlementVO;
 
 import java.util.List;
 
@@ -13,8 +12,7 @@ import java.util.List;
  * 31-61天逾期
  */
 public enum ActionPlanEnum {
-    SERVICE_CLEAN_UP("服务结清"),
-    HARDWARE_CLEAN_UP("硬件结清"),
+    CLEAN_UP("已结清"),
     NORMAL("正常"),
     PROMPT("催款函+利息"),
     STOP_SERVICE("停服+法务催款函"),
@@ -25,7 +23,7 @@ public enum ActionPlanEnum {
         this.code = code;
     }
 
-    public static ActionPlanEnum getActionPlan(TableCommonColumn column, WriteOffTypeEnum type) {
+    public static ActionPlanEnum getActionPlan(TableCommonColumn column) {
         if (!NumericUtils.isNullOrZero(column.getDay_lt_90_total())) {
             return PROSECUTE;
         }
@@ -37,12 +35,12 @@ public enum ActionPlanEnum {
         }
         if (NumericUtils.isNullOrZero(column.getOverdueTotal())
                 && NumericUtils.isNullOrZero(column.getUnOverdueAmount())) {
-            return type == WriteOffTypeEnum.SERVICE ? SERVICE_CLEAN_UP : HARDWARE_CLEAN_UP;
+            return CLEAN_UP;//type == WriteOffTypeEnum.SERVICE ? SERVICE_CLEAN_UP : HARDWARE_CLEAN_UP;
         }
         return NORMAL;
     }
 
-    public static ActionPlanEnum getActionPlan(List<? extends WriteOffCommon> writeOffCommons, WriteOffTypeEnum type) {
+    public static ActionPlanEnum getActionPlan(List<? extends WriteOffCommon> writeOffCommons) {
         if (CollectionUtils.isEmpty(writeOffCommons)) {
             return NORMAL;
         }
@@ -56,7 +54,7 @@ public enum ActionPlanEnum {
             }
         }
         if (maxOverdunDate == null) {
-            return type == WriteOffTypeEnum.SERVICE ? SERVICE_CLEAN_UP : HARDWARE_CLEAN_UP;
+            return CLEAN_UP;// type == WriteOffTypeEnum.SERVICE ? SERVICE_CLEAN_UP : HARDWARE_CLEAN_UP;
         }
         if (maxOverdunDate.isGt(OverdueDateEnum.DAY61_90)) {
             return PROSECUTE;

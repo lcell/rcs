@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
-@ApiModel("查询分期结算的输出")
+@ApiModel("查询结算输出报表")
 @Data
 public class QuerySettlementOutput {
     @ApiModelProperty(value = "合同的actionPlan", dataType = "String")

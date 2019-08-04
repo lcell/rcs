@@ -1,6 +1,5 @@
 package com.liguang.rcs.admin.web.writeoff;
 
-import com.google.common.base.Strings;
 import com.liguang.rcs.admin.common.enumeration.OverdueDateEnum;
 import com.liguang.rcs.admin.util.EnumUtils;
 import io.swagger.annotations.ApiModel;

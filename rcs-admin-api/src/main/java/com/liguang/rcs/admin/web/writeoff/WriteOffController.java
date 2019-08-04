@@ -1,19 +1,15 @@
 package com.liguang.rcs.admin.web.writeoff;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.liguang.rcs.admin.common.enumeration.ActionPlanEnum;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.exception.BaseException;
 import com.liguang.rcs.admin.service.ContractService;
 import com.liguang.rcs.admin.service.WriteOffService;
 import com.liguang.rcs.admin.util.DateUtils;
-import com.liguang.rcs.admin.util.EnumUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
 import com.liguang.rcs.admin.util.ResponseCode;
-import com.liguang.rcs.admin.web.contract.ContractVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,8 +24,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.liguang.rcs.admin.util.NumericUtils.plus;
-
 @Api(tags = "核销管理API")
 @RestController
 @RequestMapping("/rcs/writeOff")
@@ -42,7 +36,8 @@ public class WriteOffController {
     @Autowired
     private ContractService contractService;
 
-    @ApiOperation("通过合同ID查询核销结算记录")
+
+    @ApiOperation("通过合同ID查询核硬件销结算记录")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
     )
@@ -58,7 +53,7 @@ public class WriteOffController {
         try {
             QuerySettlementOutput output = new QuerySettlementOutput();
             List<WriteOffSettlementVO> settlementVOS = writeOffService.querySettlement(contract);
-            output.setActionPlan(ActionPlanEnum.getActionPlan(settlementVOS, WriteOffTypeEnum.HARDWARE).getCode());
+            output.setActionPlan(ActionPlanEnum.getActionPlan(settlementVOS).getCode());
             if (settlementVOS != null && !settlementVOS.isEmpty()) {
                 settlementVOS.add(WriteOffSettlementVO.buildTotal(settlementVOS));
             }
@@ -74,14 +69,11 @@ public class WriteOffController {
     @ApiOperation("根据客户ID和合同生效时间查看核销记录列表")
     @PostMapping("/queryWriteOffRecord")
     public ResponseObject<List<WriteOffVO>> queryWriteOffRecord(@RequestBody QueryWriteOffParams params) {
-        Timestamp effectTime = null;
-        Long contractId = null;
-        WriteOffTypeEnum type = null;
+        Timestamp effectTime;
         if (params == null
                 || (effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyy-MM-dd")) == null
                 || Strings.isNullOrEmpty(params.getEffectDate())
-                || (contractId = NumericUtils.toLong(params.getContractId())) == null
-                || (type = EnumUtils.findByCode(WriteOffTypeEnum.values(), params.getWriteOffType())) == null) {
+                ||  NumericUtils.toLong(params.getContractId()) == null) {
             log.error("[WriteOff] query params is invalid, params:{}", params);
             return ResponseObject.badArgumentValue();
         }
@@ -89,7 +81,7 @@ public class WriteOffController {
                 .stream()
                 .filter(record -> Strings.isNullOrEmpty(record.getContractId()) ||
                         (record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
-                                && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
+//                                && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同
                                 && record.getSettlementId().equals(params.getSettlementId())))//关联的合同期号和当前相同
                 .collect(Collectors.toList())
         );
@@ -105,14 +97,13 @@ public class WriteOffController {
         }
         try {
             Long contractId = params.checkAndGetContractId();
-            WriteOffTypeEnum type = params.checkAndGetType();
             List<Long> writeOffIds = params.checkAndGetWriteOffIds();
             ContractEntity contract = contractService.queryEntityById(contractId);
             if (writeOffIds == null || writeOffIds.isEmpty() || contract == null) {
                 log.error("[WriteOff] params is invalid, params:{}", params);
                 return ResponseObject.badArgumentValue();
             }
-            writeOffService.relationContract(contract, writeOffIds, type, params.getSettlementId());
+            writeOffService.relationContract(contract, writeOffIds, params.getSettlementId());
             return ResponseObject.success();
         } catch (BaseException ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
@@ -140,7 +131,6 @@ public class WriteOffController {
         }
         try {
             Long contractId = params.checkAndGetContractId();
-            WriteOffTypeEnum type = params.checkAndGetType();
             List<Long> writeOffIds = params.checkAndGetWriteOffIds();
 
             ContractEntity contract = contractService.queryEntityById(contractId);
@@ -149,9 +139,9 @@ public class WriteOffController {
                 return ResponseObject.badArgumentValue();
             }
             if (writeOffIds == null || writeOffIds.isEmpty()) {
-                writeOffService.unAllRelationContract(contract, type, params.getSettlementId());
+                writeOffService.unAllRelationContract(contract, params.getSettlementId());
             } else {
-                writeOffService.unRelationContract(contract, writeOffIds, type, params.getSettlementId());
+                writeOffService.unRelationContract(contract, writeOffIds, params.getSettlementId());
             }
             return ResponseObject.success();
         } catch (BaseException ex) {
@@ -205,12 +195,9 @@ public class WriteOffController {
     @ApiOperation("导出核销记录")
     @GetMapping("/export/{contractId}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true),
-            @ApiImplicitParam(name = "type", value = "核销类型0-硬件，1-服务", type = "String", required = true)
+            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
     })
-    public void export(HttpServletResponse response,
-                       @PathVariable(value = "contractId") String contractId,
-                       @RequestParam(value = "type") String type) {
+    public void export(HttpServletResponse response, @PathVariable(value = "contractId") String contractId) {
 
         //TODO
     }
@@ -232,7 +219,7 @@ public class WriteOffController {
         try {
             QueryCommissionFeeSettlementOutput output = new QueryCommissionFeeSettlementOutput();
             List<CommissionFeeSettlementVO> commissionFeeSettlementVOS = writeOffService.queryCommissionByContractId(contract);
-            output.setActionPlan(ActionPlanEnum.getActionPlan(commissionFeeSettlementVOS, WriteOffTypeEnum.SERVICE).getCode());
+            output.setActionPlan(ActionPlanEnum.getActionPlan(commissionFeeSettlementVOS).getCode());
             if (commissionFeeSettlementVOS != null && !commissionFeeSettlementVOS.isEmpty()) {
                 commissionFeeSettlementVOS.add(CommissionFeeSettlementVO.buildTotal(commissionFeeSettlementVOS));
             }

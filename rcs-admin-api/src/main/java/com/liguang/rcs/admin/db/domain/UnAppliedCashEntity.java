@@ -1,13 +1,9 @@
 package com.liguang.rcs.admin.db.domain;
 
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
-import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffSourceToString;
-import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -48,8 +44,8 @@ public class UnAppliedCashEntity extends AbstractEntity {
     private Double overdueTotal; //逾期合计
     @Column(name = "total")
     private Double total; //本期合计
-    @Column(name = "write_off_type")
-    @Convert(converter = WriteOffTypeToString.class)
-    private WriteOffTypeEnum writeOffType;
+//    @Column(name = "write_off_type")
+//    @Convert(converter = WriteOffTypeToString.class)
+//    private WriteOffTypeEnum writeOffType;
 
 }

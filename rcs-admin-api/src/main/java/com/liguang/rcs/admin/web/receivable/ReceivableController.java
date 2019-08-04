@@ -1,17 +1,20 @@
 package com.liguang.rcs.admin.web.receivable;
 
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
+import com.google.common.base.Strings;
+import com.liguang.rcs.admin.common.enumeration.ContractTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
+import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.domain.UnAppliedCashEntity;
+import com.liguang.rcs.admin.service.ContractService;
 import com.liguang.rcs.admin.service.ReceivableService;
+import com.liguang.rcs.admin.util.NumericUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,12 +30,26 @@ public class ReceivableController {
     @Autowired
     private ReceivableService receivableService;
 
-    @PostMapping("/queryCustomHw")
-    @ApiOperation("查询客户硬件分期")
-    public ResponseObject<CustomHwOutput> queryCustomHw(@Valid @RequestBody CustomQueryConditionParam param) {
-        //TODO //check 参数校验
+    @Autowired
+    private ContractService contractService;
+
+    @PostMapping("/queryCustomHw/{contractId}")
+    @ApiOperation("根据合同ID查询客户硬件分期")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
+    )
+    public ResponseObject<CustomHwOutput> queryCustomHw(@PathVariable("contractId") String contractId) {
+        if (Strings.isNullOrEmpty(contractId) || NumericUtils.toLong(contractId) == null) {
+            log.error("[Receivable] input contractId is invalid, contractId:{}", contractId);
+            return ResponseObject.badArgumentValue();
+        }
         try {
-            return ResponseObject.success(receivableService.queryCustomHw(param));
+            ContractEntity contractEntity = contractService.queryEntityById(NumericUtils.toLong(contractId));
+            if (contractEntity == null || contractEntity.getType() != ContractTypeEnum.HARDWARE) {
+                log.error("[Receivable] contract is invalid, contract:{}", contractEntity);
+                return ResponseObject.dataNotExist();
+            }
+            return ResponseObject.success(receivableService.queryCustomHw(contractEntity));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
@@ -43,7 +60,6 @@ public class ReceivableController {
     public ResponseObject<Void> updateCustomHw(@Valid @RequestBody CustomReceivableVO customHWReceivableVO) {
         try {
             UnAppliedCashEntity entity = customHWReceivableVO.toEntity();
-            entity.setWriteOffType(WriteOffTypeEnum.HARDWARE);
             receivableService.saveUnAppliedCash(entity);
             return ResponseObject.success();
         } catch (Exception ex) {
@@ -52,25 +68,37 @@ public class ReceivableController {
         }
     }
 
-    @PostMapping("/queryCustomCommission")
-    @ApiOperation("查询客户服务费应收")
-    public ResponseObject<CustomCommissionOutput> queryCustomCommission(@Valid @RequestBody CustomQueryConditionParam param) {
+    @PostMapping("/queryCustomService/{contractId}")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "contractId", value = "合同ID", type = "String", required = true)
+    )
+    @ApiOperation("根据合同ID查询客户服务费应收")
+    public ResponseObject<CustomCommissionOutput> queryCustomCommission(@PathVariable("contractId") String contractId) {
+        if (Strings.isNullOrEmpty(contractId) || NumericUtils.toLong(contractId) == null) {
+            log.error("[Receivable] input contractId is invalid, contractId:{}", contractId);
+            return ResponseObject.badArgumentValue();
+        }
         try {
-            return ResponseObject.success(receivableService.queryCustomCommission(param));
+            ContractEntity contractEntity = contractService.queryEntityById(NumericUtils.toLong(contractId));
+            if (contractEntity == null || contractEntity.getType() != ContractTypeEnum.SERVICE) {
+                log.error("[Receivable] contract is invalid, contract:{}", contractEntity);
+                return ResponseObject.dataNotExist();
+            }
+
+            return ResponseObject.success(receivableService.queryCustomCommission(contractEntity));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
         }
     }
 
-    @PostMapping("/updateCustomCommission")
+    @PostMapping("/updateCustomService")
     @ApiOperation("更新客户服务费手动核实到账")
     public ResponseObject<Void> updateCustomCommission(@Valid @RequestBody CustomReceivableVO vo) {
         try {
             //计算一下1-30的数据, 服务费没有1-30这个分类，因此需要加上
             vo.setDay1_30(plus(vo.getDay1_5(), vo.getDay6_30()));
             UnAppliedCashEntity entity = vo.toEntity();
-            entity.setWriteOffType(WriteOffTypeEnum.SERVICE);
             receivableService.saveUnAppliedCash(entity);
             return ResponseObject.success();
         } catch (Exception ex) {
@@ -85,7 +113,7 @@ public class ReceivableController {
     public ResponseObject<List<ReceivableDetailVo>> queryHwDetail(@Valid @RequestBody QuerySummaryParam param) {
         //TODO //check 参数校验
         try {
-            return ResponseObject.success(receivableService.queryReceivableDetail(param, WriteOffTypeEnum.HARDWARE));
+            return ResponseObject.success(receivableService.queryReceivableDetail(param, ContractTypeEnum.HARDWARE));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
@@ -97,7 +125,7 @@ public class ReceivableController {
     public ResponseObject<List<ReceivableSummaryVo>> queryHwSummary(@Valid @RequestBody QuerySummaryParam param) {
         //TODO //check 参数校验
         try {
-            return ResponseObject.success(receivableService.queryReceivableSummary(param, WriteOffTypeEnum.HARDWARE));
+            return ResponseObject.success(receivableService.queryReceivableSummary(param, ContractTypeEnum.HARDWARE));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
@@ -109,7 +137,7 @@ public class ReceivableController {
     public ResponseObject<List<ReceivableDetailVo>> queryServiceDetail(@Valid @RequestBody QuerySummaryParam param) {
         //TODO //check 参数校验
         try {
-            return ResponseObject.success(receivableService.queryReceivableDetail(param, WriteOffTypeEnum.SERVICE));
+            return ResponseObject.success(receivableService.queryReceivableDetail(param, ContractTypeEnum.SERVICE));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();
@@ -121,7 +149,7 @@ public class ReceivableController {
     public ResponseObject<List<ReceivableSummaryVo>> queryServiceSummary(@Valid @RequestBody QuerySummaryParam param) {
         //TODO //check 参数校验
         try {
-            return ResponseObject.success(receivableService.queryReceivableSummary(param, WriteOffTypeEnum.SERVICE));
+            return ResponseObject.success(receivableService.queryReceivableSummary(param, ContractTypeEnum.SERVICE));
         } catch (Exception ex) {
             log.error("[WriteOff] Inner Err, Exception:{}", ex);
             return ResponseObject.serious();

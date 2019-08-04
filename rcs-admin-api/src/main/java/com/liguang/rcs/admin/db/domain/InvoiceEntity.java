@@ -1,12 +1,9 @@
 package com.liguang.rcs.admin.db.domain;
 
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
-import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -41,8 +38,8 @@ public class InvoiceEntity extends AbstractEntity {
     private Long contractId; // 发票所关联的合同ID, 外键
 //    @Column(name = "contract_no")
 //    private String contractNo;//发票所关联的合同编号
-    @Column(name = "write_off_type")
-    @Convert(converter = WriteOffTypeToString.class)
-    private WriteOffTypeEnum writeOffType; //发票核销类型
+//    @Column(name = "write_off_type")
+//    @Convert(converter = WriteOffTypeToString.class)
+//    private WriteOffTypeEnum writeOffType; //发票核销类型
 
 }

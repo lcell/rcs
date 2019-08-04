@@ -7,18 +7,14 @@ import lombok.Data;
 @ApiModel("查看应收汇总参数")
 @Data
 public class QuerySummaryParam {
-    @ApiModelProperty(value = "产品类型", dataType = "String")
+    @ApiModelProperty(value = "产品类型 0-直销 1-渠道 2-爱德堡", dataType = "String")
     private String productType;
     @ApiModelProperty(value = "团队", dataType = "String")
     private String teamId;
-    @ApiModelProperty(value = "员工工号", dataType = "String")
-    private String accountId;
-    @ApiModelProperty(value = "员工姓名", dataType = "String")
-    private String accountName;
+    @ApiModelProperty(value = "销售经理名称", dataType = "String")
+    private String salesName;
     @ApiModelProperty(value = "起始时间, 格式 yyyy-MM-dd", dataType = "String")
     private String beginDate;
-    @ApiModelProperty(value = "合同状态", dataType = "String")
+    @ApiModelProperty(value = "合同状态 0-normal 1-legal 2-3rd party", dataType = "String")
     private String contractStatus;
-//    @ApiModelProperty(value = "操作者类型, 0-销售， 1-团队 2-PP业务", dataType = "String")
-//    private String operatorType;
 }

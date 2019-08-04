@@ -5,16 +5,11 @@ import com.liguang.rcs.admin.common.copy.CopyProperty;
 import com.liguang.rcs.admin.common.copy.EnableCopyProperties;
 import com.liguang.rcs.admin.common.copy.converter.StringToNumberConverter;
 import com.liguang.rcs.admin.common.copy.converter.StringToTimestampConverter;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
-import com.liguang.rcs.admin.common.enumeration.converter.StringToIEnumConverter;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
-import com.liguang.rcs.admin.util.DateUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel("发票信息")
@@ -48,9 +43,9 @@ public class InvoiceVO {
     @CopyProperty(typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
     @ApiModelProperty(value = "发票ID", dataType = "String")
     private String contractId;
-    @CopyProperty(typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
-    @ApiModelProperty(value = "核销类型，0-分期， 1-服务", dataType = "String")
-    private String writeOffType;
+//    @CopyProperty(typeCovertClass = StringToIEnumConverter.class, extClass = WriteOffTypeEnum.class)
+//    @ApiModelProperty(value = "核销类型，0-分期， 1-服务", dataType = "String")
+//    private String writeOffType;
 
     public static InvoiceVO buildFrom(InvoiceEntity entity) {
         try {

@@ -4,7 +4,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.liguang.rcs.admin.common.enumeration.OverdueDateEnum;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
 import com.liguang.rcs.admin.db.domain.WriteOffEntity;
@@ -22,7 +21,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.liguang.rcs.admin.common.enumeration.OverdueDateEnum.DAY0;
@@ -41,18 +43,18 @@ public class WriteOffService {
 
 
     @Transactional
-    public void relationContract(ContractEntity contract, List<Long> writeOffIds, WriteOffTypeEnum type, String settlementId) {
-        writeOffRepository.relationContract(contract.getId(), type.getCode(), settlementId, writeOffIds);
+    public void relationContract(ContractEntity contract, List<Long> writeOffIds, String settlementId) {
+        writeOffRepository.relationContract(contract.getId(), settlementId, writeOffIds);
     }
 
     @Transactional
-    public void unRelationContract(ContractEntity contract, List<Long> writeOffIds, WriteOffTypeEnum type, String settlementId) {
-        writeOffRepository.unRelationContract(contract.getId(), type.getCode(), settlementId, writeOffIds);
+    public void unRelationContract(ContractEntity contract, List<Long> writeOffIds, String settlementId) {
+        writeOffRepository.unRelationContract(contract.getId(), settlementId, writeOffIds);
     }
 
 
-    public void unAllRelationContract(ContractEntity contract, WriteOffTypeEnum type, String settlementId) {
-        writeOffRepository.unAllRelationContract(contract.getId(), type.getCode(), settlementId);
+    public void unAllRelationContract(ContractEntity contract, String settlementId) {
+        writeOffRepository.unAllRelationContract(contract.getId(), settlementId);
     }
 
     public void deleteWriteOffById(Long writeOffIdLong) {
@@ -76,9 +78,9 @@ public class WriteOffService {
     }
 
 
-    public Multimap<String, WriteOffEntity> queryWriteOffEntity(Long contractId, WriteOffTypeEnum type) {
+    public Multimap<String, WriteOffEntity> queryWriteOffEntity(Long contractId) {
         Multimap<String, WriteOffEntity> entityMultimap = ArrayListMultimap.create();
-        List<WriteOffEntity> writeOffEntitys = writeOffRepository.findByRefContractIdAndType(contractId, type);
+        List<WriteOffEntity> writeOffEntitys = writeOffRepository.findByRefContractId(contractId);
         if (writeOffEntitys == null || writeOffEntitys.isEmpty()) {
             return entityMultimap;
         }
@@ -92,17 +94,17 @@ public class WriteOffService {
     //合同生效日期为，第一个发票日期 //暂时不考虑，每期发票开不够后续补齐的场景
     //1. 分期策略 发票金额 > 当期金额 ？ 合同当前金额 ：发票金额
     //                剩余发票金额 = 发票金额 - 合同当前金额；
-    //2. settlemenetId 生成规则 0，1，2，3，4，5，6 ...
+    //2. settlementId 生成规则 0，1，2，3，4，5，6 ...
     public List<WriteOffSettlementVO> querySettlement(ContractEntity contract) throws BaseException {
 
-        List<InvoiceEntity> invoiceList = invoiceService.queryRelatedEntityList(contract.getId(), WriteOffTypeEnum.HARDWARE);
+        List<InvoiceEntity> invoiceList = invoiceService.queryRelatedEntityList(contract.getId());
         if (invoiceList == null || invoiceList.isEmpty()) {
             log.error("[WriteOff] there is no invoice related to contarct, contract:{}", contract);
             return Collections.emptyList();
         }
         List<WriteOffSettlementVO> settlementList = Lists.newArrayListWithCapacity(contract.getReceivableNum());
         //查询核销记录
-        Multimap<String, WriteOffEntity> writeOffMaps = queryWriteOffEntity(contract.getId(), WriteOffTypeEnum.HARDWARE);
+        Multimap<String, WriteOffEntity> writeOffMaps = queryWriteOffEntity(contract.getId());
         Calendar payDay = calcFirstPayDate(invoiceList.get(0));
 
         double totalInvoiceAmount = calcTotalAmount(invoiceList);
@@ -165,8 +167,8 @@ public class WriteOffService {
             vo.setActualPayDate(DateUtils.toString(payDay, "yyyyMMdd"));
             vo.setActualPayAmount(totalActualPay);
         } finally {
-            OverdueDateEnum overdueType = DAY0;
-            Double overdueAmount = 0d;
+            OverdueDateEnum overdueType;
+            Double overdueAmount;
             //计算逾期
             if ((overdueAmount = minus(vo.getPlanPayAmount(), vo.getActualPayAmount())) > 0) {
                 int deltaMonth = DateUtils.dateMinusForMonth(Calendar.getInstance().getTime(), vo.getPayMonth(), "yyyyMM");
@@ -186,7 +188,8 @@ public class WriteOffService {
 
     private Calendar calcFirstPayDate(InvoiceEntity invoice) {
         Calendar instance = Calendar.getInstance();
-        instance.set(instance.get(Calendar.YEAR) - 1, instance.get(Calendar.MONTH) + 1, 0);
+        instance.setTime(invoice.getBillingDate());
+        instance.set(instance.get(Calendar.YEAR), instance.get(Calendar.MONTH) + 1, 0);
         return instance;
     }
 
@@ -209,12 +212,12 @@ public class WriteOffService {
      * @return
      */
     public List<CommissionFeeSettlementVO> queryCommissionByContractId(ContractEntity contract) throws BaseException {
-        List<InvoiceEntity> entityList = invoiceService.queryRelatedEntityList(contract.getId(), WriteOffTypeEnum.SERVICE);
+        List<InvoiceEntity> entityList = invoiceService.queryRelatedEntityList(contract.getId());
         if (entityList == null || entityList.isEmpty()) {
             return Collections.emptyList();
         }
         try {
-            Multimap<String, WriteOffEntity> writeOffMap = queryWriteOffEntity(contract.getId(), WriteOffTypeEnum.SERVICE);
+            Multimap<String, WriteOffEntity> writeOffMap = queryWriteOffEntity(contract.getId());
             List<CommissionFeeSettlementVO> result = Lists.newArrayListWithCapacity(entityList.size());
             Double actualPayTotal = null;
             for (int i = 0; i < entityList.size(); i++) {
@@ -237,34 +240,34 @@ public class WriteOffService {
     }
 
     //FIXME 后续可以考虑将它和分期的计算合并在一起
-    private void setActualPayInfo(CommissionFeeSettlementVO vo, Collection<WriteOffEntity> writeOffEntities) throws ParseException {
+    private void setActualPayInfo(CommissionFeeSettlementVO serviceVo, Collection<WriteOffEntity> writeOffEntities) throws ParseException {
+        if (writeOffEntities == null || writeOffEntities.isEmpty()) {
+            return;
+        }
         Timestamp payDay = null;
         try {
-            if (writeOffEntities == null || writeOffEntities.isEmpty()) {
-                return;
-            }
             Double totalActualPay = 0d;
             for(WriteOffEntity entity : writeOffEntities) {
                 totalActualPay = plus(totalActualPay, entity.getPaymentAmount());
                 payDay = entity.getPaymentDate();
             }
-            vo.setActualPayDate(DateUtils.toString(payDay, "yyyyMMdd"));
-            vo.setActualPayAmount(totalActualPay);
+            serviceVo.setActualPayDate(DateUtils.toString(payDay, "yyyyMMdd"));
+            serviceVo.setActualPayAmount(totalActualPay);
         } finally {
             OverdueDateEnum overdueType = DAY0;
-            Double overdueAmount = minus(vo.getPayAmount(), vo.getActualPayAmount());
-            vo.setReceivableReasonable(overdueAmount); //设置应收金额
+            Double overdueAmount = minus(serviceVo.getPayAmount(), serviceVo.getActualPayAmount());
+            serviceVo.setReceivableReasonable(overdueAmount); //设置应收金额
             //计算逾期 如果应收金额大于
-            if (vo.getReceivableReasonable() > 0) {
-                long deltaDay = DateUtils.dateMinusToNow(vo.getPayDate(), "yyyyMMdd") - 30;
+            if (serviceVo.getReceivableReasonable() > 0) {
+                long deltaDay = DateUtils.dateMinusToNow(serviceVo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             } else {
-                long deltaDay = DateUtils.dateMinus(DateUtils.toString(payDay, "yyyyMMdd"),  vo.getPayDate(), "yyyyMMdd") - 30;
+                long deltaDay = DateUtils.dateMinus(DateUtils.toString(payDay, "yyyyMMdd"),  serviceVo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             }
             if (overdueType != DAY0) {
-                vo.setOverdueNumOfDate(overdueType.getCode());
-                vo.setOverdueAmount(overdueAmount);
+                serviceVo.setOverdueNumOfDate(overdueType.getCode());
+                serviceVo.setOverdueAmount(overdueAmount);
             }
         }
     }

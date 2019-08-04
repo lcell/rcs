@@ -1,11 +1,9 @@
 package com.liguang.rcs.admin.service;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
 import com.liguang.rcs.admin.db.repository.InvoiceRepository;
-import com.liguang.rcs.admin.util.DateUtils;
+import com.liguang.rcs.admin.exception.BaseException;
+import com.liguang.rcs.admin.util.ResponseCode;
 import com.liguang.rcs.admin.web.contract.ContractVO;
 import com.liguang.rcs.admin.web.invoice.InvoiceVO;
 import lombok.extern.slf4j.Slf4j;
@@ -39,54 +37,53 @@ public class InvoiceService {
 
     /**
      * 将发票关联到合同上
-     * @param contractId
-     * @param invoiceIds
-     * @param writeOffType
+     * @param contractId 合同ID
+     * @param invoiceIds 发票ID集合
      */
     @Transactional
-    public void relationToContract(Long contractId, List<Long> invoiceIds, WriteOffTypeEnum writeOffType) {
+    public void relationToContract(Long contractId, List<Long> invoiceIds) throws BaseException {
         ContractVO contract = contractService.queryById(contractId);
         if (contract == null) {
-            //TODO
-            throw new RuntimeException("contract not exist");
+            log.error("[Invoice] contract not exist, contractId:{}", contractId);
+            throw new BaseException(ResponseCode.NOT_EXIST);
         }
-        invoiceRepository.relationToContract(contractId, writeOffType.getCode(), invoiceIds);
+        invoiceRepository.relationToContract(contractId, invoiceIds);
     }
 
     @Transactional
-    public void unRelationToContract(long contractId, List<Long> invoiceIds, WriteOffTypeEnum writeOffType) {
+    public void unRelationToContract(long contractId, List<Long> invoiceIds) throws BaseException {
         ContractVO contract = contractService.queryById(contractId);
         if (contract == null) {
-            //TODO
-            throw new RuntimeException("contract not exist");
+            log.error("[Invoice] contract not exist, contractId:{}", contractId);
+            throw new BaseException(ResponseCode.NOT_EXIST);
         }
-        invoiceRepository.unRelationToContract(contractId, writeOffType.getCode(), invoiceIds);
+        invoiceRepository.unRelationToContract(contractId, invoiceIds);
     }
 
-    public List<InvoiceEntity> queryRelatedEntityList(Long contractId, WriteOffTypeEnum type) {
-        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findByContractIdAndWriteOffTypeOrderByBillingDate(contractId, type);
+    public List<InvoiceEntity> queryRelatedEntityList(Long contractId) {
+        List<InvoiceEntity> invoiceEntityLst = invoiceRepository.findByContractIdOrderByBillingDate(contractId);
         if (invoiceEntityLst == null || invoiceEntityLst.isEmpty()) {
             return Collections.emptyList();
         }
         return invoiceEntityLst;
     }
 
-    public List<InvoiceVO> queryRelatedList(Long contractId, WriteOffTypeEnum type) {
-        return queryRelatedEntityList(contractId, type).stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
+    public List<InvoiceVO> queryRelatedList(Long contractId) {
+        return queryRelatedEntityList(contractId).stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
     }
 
-    /**
-     * 将发票进行按月整理，并按月整理
-     */
-    public Multimap<String, InvoiceEntity> queryRelatedMap(Long contractId, WriteOffTypeEnum type) {
-        Multimap<String, InvoiceEntity> entityMap = ArrayListMultimap.create();
-        List<InvoiceEntity> invoiceLst = queryRelatedEntityList(contractId, type);
-        for (InvoiceEntity invoice: invoiceLst) {
-            String monthKey = DateUtils.toString(invoice.getBillingDate(), "yyyyMM");
-            entityMap.put(monthKey, invoice);
-        }
-        return entityMap;
-    }
+//    /**
+//     * 将发票进行按月整理，并按月整理
+//     */
+//    public Multimap<String, InvoiceEntity> queryRelatedMap(Long contractId) {
+//        Multimap<String, InvoiceEntity> entityMap = ArrayListMultimap.create();
+//        List<InvoiceEntity> invoiceLst = queryRelatedEntityList(contractId);
+//        for (InvoiceEntity invoice: invoiceLst) {
+//            String monthKey = DateUtils.toString(invoice.getBillingDate(), "yyyyMM");
+//            entityMap.put(monthKey, invoice);
+//        }
+//        return entityMap;
+//    }
 
     public void saveInvoice(InvoiceEntity toEntity) {
         this.invoiceRepository.save(toEntity);

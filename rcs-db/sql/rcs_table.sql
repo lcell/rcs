@@ -121,7 +121,6 @@ CREATE TABLE `rcs_write_off` (
   `payment_amount` double(16,2)  DEFAULT NULL COMMENT '支付金额',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `ref_contract_id` int(32) DEFAULT NULL COMMENT '关联的合同ID',
-  `type` varchar(10) DEFAULT NULL COMMENT '关联的核销类型',
   `source` varchar(10) DEFAULT "0" COMMENT '记录来源',
   `settlement_id` varchar(50)  DEFAULT NULL COMMENT '关联核销结算ID，用于区分绑定到哪条记录上',
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
