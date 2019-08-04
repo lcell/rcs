@@ -57,19 +57,11 @@ public class ContractVO {
     @CopyProperty(targetField = "status", typeCovertClass = StringToIEnumConverter.class, extClass= ContractStatusEnum.class)
     @NotNull(message = "合同状态不可为空")
     private String status;
-    @ApiModelProperty(value = "联系人", required = true, dataType = "String")
-    @CopyProperty(targetField = "contactName")
-    @NotNull(message = "联系人不可为空")
-    private String contactName;
-    @ApiModelProperty(value = "联系手机号码", required = true, dataType = "String")
-    @CopyProperty
-    @NotNull(message = "联系手机号码不可为空")
-    private String tel;
-    @ApiModelProperty(value = "联系邮箱", required = true, dataType = "String")
-    @NotNull(message = "联系邮箱不可为空")
-    @CopyProperty
-    private String email;
 
+    @ApiModelProperty(value = "联系人信息", required = true, dataType = "String")
+    @CopyProperty
+    @NotNull(message = "联系人信息不可为空")
+    private String contactsInfo;
 
     @ApiModelProperty(value = "产品类型 0-直销 1-渠道 2-爱德堡", required = true, dataType = "String")
     @CopyProperty(targetField = "productType", typeCovertClass = StringToIEnumConverter.class, extClass= ProductTypeEnum.class)

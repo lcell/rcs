@@ -36,12 +36,12 @@ public class ContractEntity extends AbstractEntity {
     @Column(name = "contract_status")
     @Convert(converter = ContractStatusToString.class)
     private ContractStatusEnum status; //合同状态0-normal 1-legal 2-3rd party
-    @Column(name = "contact_name")
-    private String contactName; //联系人名称
-    @Column(name = "custom_tel")
-    private String tel; //客户联系方式
-    @Column(name = "custom_email")
-    private String email; //客户邮箱
+    @Column(name = "contacts_info")
+    private String contactsInfo; //联系人信息
+//    @Column(name = "custom_tel")
+//    private String tel; //客户联系方式
+//    @Column(name = "custom_email")
+//    private String email; //客户邮箱
     @Column(name = "product_type")
     @Convert(converter = ProductTypeToString.class)
     private ProductTypeEnum productType;//产品类型
