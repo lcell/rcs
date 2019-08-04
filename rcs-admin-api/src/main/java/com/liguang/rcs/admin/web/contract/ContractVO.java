@@ -58,7 +58,7 @@ public class ContractVO {
     @NotNull(message = "合同状态不可为空")
     private String status;
 
-    @ApiModelProperty(value = "联系人信息", required = true, dataType = "String")
+    @ApiModelProperty(value = "联系人信息, json字符串", required = true, dataType = "String")
     @CopyProperty
     @NotNull(message = "联系人信息不可为空")
     private String contactsInfo;
