@@ -61,7 +61,7 @@ public class AccountController {
 
     @GetMapping("/queryByName")
     @ApiOperation("根据账户名称精确模糊查询账号")
-    public ResponseObject<List<AccountVO>> queryByAccountName(@RequestParam(name = "accountNo") String accountNo) {
+    public ResponseObject<List<AccountVO>> queryByAccountName(@RequestParam(name = "accountName") String accountName) {
         //TODO
         return null;
     }

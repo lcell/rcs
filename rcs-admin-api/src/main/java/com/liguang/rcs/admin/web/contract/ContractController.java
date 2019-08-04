@@ -63,7 +63,7 @@ public class ContractController  {
     @PostMapping("/create")
     @ApiOperation("创建合同")
     public ResponseObject<Void> create(@Valid @RequestBody ContractVO contract) {
-        AccountEntity entity = null;
+        AccountEntity entity;
         if (contract == null ||
                 (entity = accountService.queryByNo(contract.getSalesNo())) == null) {
             log.error("[Contract] input is invalid, input:{}", contract);
