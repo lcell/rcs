@@ -15,7 +15,7 @@ public class QueryParams {
     @ApiModelProperty(value = "产品类型  0-直销 1-渠道 2-爱德堡", dataType = "String")
     private String productType;
     @ApiModelProperty(value = "合同类型  0-硬件，1-服务", dataType = "String")
-    private String contractType;
+    private String type;
     @ApiModelProperty(value = "生效开始日期, yyyy-MM-dd", dataType = "String")
     private String startDate;
     @ApiModelProperty(value = "生效结束日期, yyyy-MM-dd", dataType = "String")

@@ -2,11 +2,14 @@ package com.liguang.rcs.admin.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.liguang.rcs.admin.common.enumeration.ContractTypeEnum;
+import com.liguang.rcs.admin.common.enumeration.ProductTypeEnum;
 import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.db.domain.AccountEntity;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.repository.ContractRepository;
 import com.liguang.rcs.admin.util.DateUtils;
+import com.liguang.rcs.admin.util.EnumUtils;
 import com.liguang.rcs.admin.web.contract.ContractVO;
 import com.liguang.rcs.admin.web.contract.QueryParams;
 import lombok.extern.slf4j.Slf4j;
@@ -79,14 +82,14 @@ public class ContractService {
             if (!Strings.isNullOrEmpty(params.getContractNo())) {
                 conditions.add(cb.equal(root.get("contractNo"), params.getContractNo()));
             }
-            if (!Strings.isNullOrEmpty(params.getContractType())) {
-                conditions.add(cb.equal(root.get("type"), params.getContractType()));
+            if (!Strings.isNullOrEmpty(params.getType())) {
+                conditions.add(cb.equal(root.get("type"),  EnumUtils.findByCode(ContractTypeEnum.values(), params.getType())));
             }
             if (!Strings.isNullOrEmpty(params.getCustomId())) {
                 conditions.add(cb.equal(root.get("customId"), params.getCustomId()));
             }
             if (!Strings.isNullOrEmpty(params.getProductType())) {
-                conditions.add(cb.equal(root.get("productType"), params.getProductType()));
+                conditions.add(cb.equal(root.get("productType"), EnumUtils.findByCode(ProductTypeEnum.values(), params.getProductType())));
             }
             if (!Strings.isNullOrEmpty(params.getStartDate()) && !Strings.isNullOrEmpty(params.getEndDate())) {
                 conditions.add(cb.between(root.get("effectiveDate"),
