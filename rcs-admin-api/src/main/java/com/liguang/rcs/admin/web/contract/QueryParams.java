@@ -12,9 +12,9 @@ public class QueryParams {
     private String contractNo;
     @ApiModelProperty(value = "客户编号", dataType = "String")
     private String customId;
-    @ApiModelProperty(value = "产品类型", dataType = "String")
+    @ApiModelProperty(value = "产品类型  0-直销 1-渠道 2-爱德堡", dataType = "String")
     private String productType;
-    @ApiModelProperty(value = "合同类型", dataType = "String")
+    @ApiModelProperty(value = "合同类型  0-硬件，1-服务", dataType = "String")
     private String contractType;
     @ApiModelProperty(value = "生效开始日期, yyyy-MM-dd", dataType = "String")
     private String startDate;
