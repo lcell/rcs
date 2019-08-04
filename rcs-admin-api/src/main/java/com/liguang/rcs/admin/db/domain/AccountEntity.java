@@ -1,6 +1,7 @@
 package com.liguang.rcs.admin.db.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rcs_account")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class AccountEntity extends AbstractEntity {
     @Column(name = "account_no", unique = true)
     private String accountNo; //编号

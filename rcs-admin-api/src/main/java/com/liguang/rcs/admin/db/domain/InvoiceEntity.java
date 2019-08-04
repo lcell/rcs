@@ -3,6 +3,7 @@ package com.liguang.rcs.admin.db.domain;
 import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "rcs_invoice")
+@EqualsAndHashCode(callSuper = true)
 public class InvoiceEntity extends AbstractEntity {
 
     @Column(name = "identifier_code")

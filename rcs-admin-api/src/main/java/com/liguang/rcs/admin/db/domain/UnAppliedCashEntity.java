@@ -4,6 +4,7 @@ import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffSourceToString;
 import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "rcs_unapplied_cache")
+@EqualsAndHashCode(callSuper = true)
 public class UnAppliedCashEntity extends AbstractEntity {
     @Column(name = "ref_contract_id")
     private Long refContractId; //关联的合同Id

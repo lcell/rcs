@@ -5,6 +5,7 @@ import com.liguang.rcs.admin.common.enumeration.WriteOffTypeEnum;
 import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffSourceToString;
 import com.liguang.rcs.admin.common.enumeration.converter.db.WriteOffTypeToString;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import java.sql.Timestamp;
 @ToString(callSuper = true)
 @Entity
 @Table(name = "rcs_write_off")
+@EqualsAndHashCode(callSuper = true)
 public class WriteOffEntity extends AbstractEntity {
     @Column(name = "custom_id")
     private String customId; //客户编号

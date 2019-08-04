@@ -7,6 +7,7 @@ import com.liguang.rcs.admin.common.enumeration.converter.db.ContractStatusToStr
 import com.liguang.rcs.admin.common.enumeration.converter.db.ContractTypeToString;
 import com.liguang.rcs.admin.common.enumeration.converter.db.ProductTypeToString;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -17,6 +18,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "rcs_contract")
+@EqualsAndHashCode(callSuper = true)
 public class ContractEntity extends AbstractEntity {
     @Column(name = "contract_no")
     private String contractNo;//合同编号

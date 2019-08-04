@@ -10,6 +10,7 @@ import com.liguang.rcs.admin.util.ResponseUtil;
 import com.liguang.rcs.admin.web.account.AccountVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
@@ -25,13 +26,14 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 
 import static com.liguang.rcs.admin.util.ResponseCode.USER_INVALID_ACCOUNT;
+import static com.liguang.rcs.admin.util.ResponseCode.USER_LOCKED_ACCOUNT;
 
 @RestController
 @RequestMapping("rcs/auth")
 @Api(tags = "用户鉴权管理")
 @Validated
-public class AdminAuthController {
-    private static final Log LOG = LogFactory.getLog(AdminAuthController.class);
+@Slf4j
+public class RcsAuthController {
 
     @Autowired
     private RoleService roleService;
@@ -58,7 +60,7 @@ public class AdminAuthController {
         } catch (UnknownAccountException uae) {
             return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "用户帐号或密码不正确");
         } catch (LockedAccountException lae) {
-            return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "用户帐号已锁定不可用");
+            return ResponseObject.fail(USER_LOCKED_ACCOUNT);//, "用户帐号已锁定不可用");
 
         } catch (AuthenticationException ae) {
             return ResponseObject.fail(USER_INVALID_ACCOUNT);//, "认证失败");
