@@ -60,6 +60,9 @@ public class ResponseObject<T> {
     public static <T> ResponseObject<T> badArgumentValue() {
         return fail(BAD_ARGUMENT_VALUE);
     }
+    public static <T> ResponseObject<T> badArgumentValue(String message) {
+        return fail(BAD_ARGUMENT_VALUE.getCode(), message);
+    }
 
     public static <T> ResponseObject<T> dataNotExist() {
         return fail(NOT_EXIST);

@@ -40,7 +40,7 @@ public class AccountVO {
     private String district;
 
     @ApiModelProperty(value = "所属团队", dataType = "String")
-    @CopyProperty
+    @CopyProperty(targetField = "teamName")
     private String team;
 
     @CopyProperty(typeCovertClass = StringToNumberConverter.class, extClass = Long.class)

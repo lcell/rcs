@@ -1,10 +1,12 @@
 package com.liguang.rcs.admin.web.team;
 
 import com.liguang.rcs.admin.common.response.ResponseObject;
+import com.liguang.rcs.admin.service.TeamService;
 import com.liguang.rcs.admin.web.account.AccountVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,10 +17,13 @@ import java.util.List;
 @RequestMapping("/rcs/team")
 @Api(tags = "团队管理")
 public class TeamController {
+    @Autowired
+    private TeamService teamService;
 
     @PostMapping("/createDepartment")
     @ApiOperation("创建部门")
     public ResponseObject createDepartment(@Valid @RequestBody TeamVO teamVo) {
+
         return null;
     }
 
@@ -39,7 +44,7 @@ public class TeamController {
 
     @PostMapping("/addToTeam")
     @ApiOperation("加入到团队")
-    public ResponseObject addToTeam() {
+    public ResponseObject addToTeam(@Valid @RequestBody AddToTeamParams params) {
         return null;
 
     }
