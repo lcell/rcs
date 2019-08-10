@@ -67,13 +67,7 @@ public class ContractService {
         Sort order = Sort.by(Sort.Order.asc("createDate"));
         Pageable pageable = PageRequest.of(params.getCurrentPage() - 1, params.getPageSize(), order);
         Page<ContractEntity> page = contractRepository.findAll(buildSpec(params), pageable);
-
-        PageableBody<ContractVO> pageBody = new PageableBody<>();
-        pageBody.setCurrentPage(params.getCurrentPage());
-        pageBody.setPageSize(params.getPageSize());
-        pageBody.setDataList(page.getContent().stream().map(ContractVO::buildFrom).collect(Collectors.toList()));
-        pageBody.setTotalSize((int)page.getTotalElements());
-        return pageBody;
+        return PageableBody.buildFrom(page, ContractVO::buildFrom);
     }
 
     private Specification<ContractEntity> buildSpec(QueryParams params) {

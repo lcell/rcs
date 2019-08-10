@@ -2,7 +2,9 @@ package com.liguang.rcs.admin.service;
 
 import com.liguang.rcs.admin.common.copy.BeanUtils;
 import com.liguang.rcs.admin.common.copy.exception.CopyPropertiesFailException;
+import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.db.domain.AccountEntity;
+import com.liguang.rcs.admin.db.domain.TeamEntity;
 import com.liguang.rcs.admin.db.repository.AccountRepository;
 import com.liguang.rcs.admin.exception.BaseException;
 import com.liguang.rcs.admin.util.CollectionUtils;
@@ -10,9 +12,14 @@ import com.liguang.rcs.admin.util.NumericUtils;
 import com.liguang.rcs.admin.util.ResponseCode;
 import com.liguang.rcs.admin.util.bcrypt.BCryptPasswordEncoder;
 import com.liguang.rcs.admin.web.account.AccountVO;
+import com.liguang.rcs.admin.web.team.TeamVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -96,5 +103,41 @@ public class AccountService {
             return AccountVO.buildFrom(entity.get());
         }
         throw new BaseException(ResponseCode.NOT_EXIST);
+    }
+
+    public void addToTeam(TeamEntity team, List<Long> accountIds) {
+        if (team == null || CollectionUtils.isEmpty(accountIds)) {
+            return;
+        }
+        accountRepository.updateTeamInfo(team.getId(), team.getName(), accountIds);
+    }
+
+    public void addToDepartment(TeamEntity department, List<Long> accountIds) {
+        if (department == null || CollectionUtils.isEmpty(accountIds)) {
+            return;
+        }
+        accountRepository.updateDepartmentInfo(department.getId(), department.getName(), accountIds);
+    }
+
+    public PageableBody<AccountVO> queryByTeamId(Long teamId, int currentPage, int pageSize) {
+        AccountEntity entity = new AccountEntity();
+        entity.setTeamId(teamId);
+        Example<AccountEntity> example = Example.of(entity);
+        Pageable pagable = PageRequest.of(currentPage - 1, pageSize, Sort.by("name"));
+        return PageableBody.buildFrom(accountRepository.findAll(example, pagable), AccountVO::buildFrom);
+    }
+
+    public void deleteTeamInfo(Long teamId) {
+        if (teamId == null) {
+            return ;
+        }
+        accountRepository.deleteTeamInfo(teamId);
+    }
+
+    public void deleteDepartmentInfo(Long departmentId) {
+        if (departmentId == null) {
+            return;
+        }
+        accountRepository.deleteDepartmentInfo(departmentId);
     }
 }

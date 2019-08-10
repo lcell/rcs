@@ -1,11 +1,14 @@
 package com.liguang.rcs.admin.web.account;
 
 import com.google.common.base.Strings;
+import com.liguang.rcs.admin.common.response.PageableBody;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.exception.BaseException;
 import com.liguang.rcs.admin.service.AccountService;
 import com.liguang.rcs.admin.util.NumericUtils;
+import com.liguang.rcs.admin.web.team.AddToTeamParams;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ public class AccountController {
 
     @PostMapping("/changePassword")
     @ApiOperation("修改密码")
-    public ResponseObject<Void> changePassword(@Valid @RequestBody ChangePasswdInput input) {
+    public ResponseObject<Void> changePassword(@Valid @RequestBody ChangePasswdParams input) {
         if (input == null || Strings.isNullOrEmpty(input.getNewPasswd())
                 || Strings.isNullOrEmpty(input.getPasswd())) {
             log.error("[Account] input is invalid.");
@@ -107,4 +110,11 @@ public class AccountController {
         return ResponseObject.success(accountService.queryByAccountName(accountName));
     }
 
+
+    @PostMapping("/queryList")
+    @ApiOperation("查询账户列表")
+    public ResponseObject<PageableBody<AccountVO>> queryList() {
+        //TODO
+        return null;
+    }
 }

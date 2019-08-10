@@ -3,8 +3,10 @@ package com.liguang.rcs.admin.util;
 public enum  ResponseCode {
     USER_LOCKED_ACCOUNT("601","用户账户被锁定"),
     USER_INVALID_ACCOUNT("605","用户帐号或密码不正确"),
-
     USER_INVALID_PASSWORD("606","旧密码不正确"),
+
+    TEAM_DELETE_FAIL("701", "需要解散其所有子团队"),
+
 
     BAD_ARGUMENT("401", "参数不对"),
     BAD_ARGUMENT_VALUE("402", "参数值不对"),
@@ -15,6 +17,9 @@ public enum  ResponseCode {
     UPDATED_DATA_EXPIRED("504", "更新数据已经失效"),
     UPDATED_DATA_FAILED("505", "更新数据失败"),
     NO_PERMISSION("506", "无操作权限");
+
+
+
 
 
     private final String code;

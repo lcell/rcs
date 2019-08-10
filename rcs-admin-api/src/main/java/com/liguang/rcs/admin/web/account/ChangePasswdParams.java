@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @ToString
 @ApiModel("修改密码参数")
-public class ChangePasswdInput {
+public class ChangePasswdParams {
 
     @ApiModelProperty(value = "原始密码", dataType = "String", required = true)
     @NotBlank(message = "原始密码不可为空")

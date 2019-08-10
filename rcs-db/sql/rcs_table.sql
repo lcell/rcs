@@ -121,7 +121,7 @@ CREATE TABLE `rcs_write_off` (
   `payment_amount` double(16,2)  DEFAULT NULL COMMENT '支付金额',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `ref_contract_id` int(32) DEFAULT NULL COMMENT '关联的合同ID',
-  `source` varchar(10) DEFAULT "0" COMMENT '记录来源',
+  `source` varchar(10) DEFAULT '0' COMMENT '记录来源',
   `settlement_id` varchar(50)  DEFAULT NULL COMMENT '关联核销结算ID，用于区分绑定到哪条记录上',
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
   `create_date` datetime DEFAULT NULL COMMENT '更新时间',
@@ -147,10 +147,7 @@ CREATE TABLE `rcs_contract` (
   `contract_status` varchar(10) DEFAULT NULL COMMENT '合同状态',
   `product_type` varchar(10) DEFAULT NULL COMMENT '产品类型',
 
-
-  `contact_name` varchar(50)  DEFAULT NULL COMMENT '联系人',
-  `custom_tel` varchar(20)  DEFAULT NULL COMMENT '联系手机号',
-  `custom_email` varchar(50)  DEFAULT NULL COMMENT '邮箱',
+  `contacts_info` text  DEFAULT NULL COMMENT '联系信息',
 
   `sales_id` int(32) DEFAULT NULL COMMENT '销售经理ID',
   `sales_no` varchar(50)  DEFAULT NULL COMMENT '销售员工号',
@@ -163,4 +160,49 @@ CREATE TABLE `rcs_contract` (
   `update_date` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='合同记录表';
+
+DROP TABLE IF EXISTS `rcs_account`;
+
+CREATE TABLE `rcs_account`(
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+   `account_no` varchar(63) DEFAULT NULL COMMENT '账号',
+   `name`  varchar(63) DEFAULT NULL COMMENT '员工名称',
+   `department` varchar(63) DEFAULT NULL COMMENT '部门名称',
+   `department_id` int(32) DEFAULT NULL COMMENT '部门ID' ,
+   `district` varchar(63) DEFAULT NULL COMMENT '区域',
+   `team_name` varchar(63) DEFAULT NULL COMMENT '团队名称',
+   `team_id` int(32) DEFAULT NULL COMMENT '团队ID',
+   `position` varchar(63) DEFAULT NULL COMMENT '职位',
+   `tel_number` varchar(31) DEFAULT NULL COMMENT '手机号码' ,
+   `email` varchar(63) DEFAULT NULL COMMENT '邮件',
+   `passwd` varchar(63) DEFAULT NULL COMMENT '密码',
+   `role_ids` varchar(127) DEFAULT '[]' COMMENT '角色列表',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+
+
+DROP TABLE IF EXISTS `rcs_group`;
+
+CREATE TABLE `rcs_group`(
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+   `name`  varchar(63) DEFAULT NULL COMMENT '团队名称',
+   `team_leader_id` int(32) DEFAULT NULL COMMENT '团队领导ID',
+   `team_leader_name` varchar(63) DEFAULT NULL COMMENT '团队领导名称',
+   `parent_ref_team_id` int(32) DEFAULT NULL COMMENT '上级团队ID信息',
+   `desc` varchar(1023) DEFAULT NULL COMMENT '团队描述',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='团队表';
+
+
+
+
 
