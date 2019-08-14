@@ -20,5 +20,4 @@ public @interface EnableExcelExportImport {
     //设置处理行信息的后置钩子， 用于设置row的样式使用
     Class<? extends PostProcessRowLoaded> postProcess() default NonPostProcessRowLoaded.class ;
 
-
 }

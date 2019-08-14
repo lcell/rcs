@@ -10,6 +10,7 @@ import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.repository.ContractRepository;
 import com.liguang.rcs.admin.util.DateUtils;
 import com.liguang.rcs.admin.util.EnumUtils;
+import com.liguang.rcs.admin.util.NumericUtils;
 import com.liguang.rcs.admin.web.contract.ContractVO;
 import com.liguang.rcs.admin.web.contract.QueryParams;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,6 +51,13 @@ public class ContractService {
             return null;
         }
         return entity.get();
+    }
+
+    public void updateEffectTime(Long id, Timestamp timestamp) {
+        if (NumericUtils.isNullOrZero(id)) {
+            return;
+        }
+        contractRepository.updateffectTime(timestamp, id);
     }
 
     @Transactional

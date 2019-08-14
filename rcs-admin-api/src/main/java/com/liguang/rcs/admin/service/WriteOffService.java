@@ -41,6 +41,9 @@ public class WriteOffService {
     @Autowired
     private InvoiceService invoiceService;
 
+    @Autowired
+    private ContractService contractService;
+
 
     @Transactional
     public void relationContract(ContractEntity contract, List<Long> writeOffIds, String settlementId) {
@@ -105,7 +108,12 @@ public class WriteOffService {
         List<WriteOffSettlementVO> settlementList = Lists.newArrayListWithCapacity(contract.getReceivableNum());
         //查询核销记录
         Multimap<String, WriteOffEntity> writeOffMaps = queryWriteOffEntity(contract.getId());
+        if (contract.getEffectiveDate() == null || contract.getEffectiveDate().equals(invoiceList.get(0).getBillingDate())) {
+            contractService.updateEffectTime(contract.getId(), invoiceList.get(0).getBillingDate());
+        }
         Calendar payDay = calcFirstPayDate(invoiceList.get(0));
+
+        //检查是否和合同的生效日期一直
 
         double totalInvoiceAmount = calcTotalAmount(invoiceList);
         Double actualPayAmountTotal = 0d; // 累计支付
@@ -222,6 +230,10 @@ public class WriteOffService {
             Double actualPayTotal = null;
             for (int i = 0; i < entityList.size(); i++) {
                 InvoiceEntity entity = entityList.get(i);
+                if (i == 0 && (contract.getEffectiveDate() == null
+                        || contract.getEffectiveDate().equals(entity.getBillingDate()))) {
+                    contractService.updateEffectTime(contract.getId(), entity.getBillingDate());
+                }
                 CommissionFeeSettlementVO vo = new CommissionFeeSettlementVO();
                 vo.setSettlementId(entity.getId().toString());
                 vo.setPayDate(DateUtils.toString(entity.getBillingDate(), "yyyyMMdd"));
