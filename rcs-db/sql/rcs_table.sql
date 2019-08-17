@@ -110,6 +110,8 @@ CREATE TABLE `rcs_invoice` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='发票记录表';
 
+ALTER TABLE `rcs_invoice` ADD unique(`invoice_no`);
+
 
 
 DROP TABLE IF EXISTS `rcs_write_off`;
@@ -161,6 +163,8 @@ CREATE TABLE `rcs_contract` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='合同记录表';
 
+ALTER TABLE `rcs_contract` ADD unique(`contract_no`);
+
 DROP TABLE IF EXISTS `rcs_account`;
 
 CREATE TABLE `rcs_account`(
@@ -184,6 +188,7 @@ CREATE TABLE `rcs_account`(
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
+ALTER TABLE `rcs_account` ADD unique(`account_no`);
 
 
 DROP TABLE IF EXISTS `rcs_group`;
