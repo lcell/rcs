@@ -43,12 +43,10 @@ public class ContractController  {
     @PostMapping("/query")
     @ApiOperation("查询合同列表")
     public ResponseObject<PageableBody<ContractVO>> query(@RequestBody QueryParams params) {
-        //check
         if (params == null) {
             log.warn("[Contract] params can't be null.");
             return ResponseObject.badArgument();
         }
-
         return ResponseObject.success(contractService.query(params));
     }
 

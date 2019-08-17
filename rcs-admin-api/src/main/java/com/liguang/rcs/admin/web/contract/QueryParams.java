@@ -41,5 +41,8 @@ public class QueryParams {
     @ApiModelProperty(value = "合同状态 0-normal 1-legal 2-3rd party", dataType = "String")
     private String status;
 
+    @ApiModelProperty(value = "团队ID", dataType = "String")
+    private String teamId;
+
 
 }

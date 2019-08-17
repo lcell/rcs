@@ -37,12 +37,14 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public AccountEntity queryByNo(String salesNo) {
-        //TODO TEst
-
-        AccountEntity entity = new AccountEntity();
-        entity.setId(1L);
-        entity.setTeamId(1L);
-        return entity;//accountRepository.findByAccountNo(salesNo);
+        AccountEntity account = accountRepository.findByAccountNo(salesNo);
+        if (account == null) {
+            AccountEntity entity = new AccountEntity();
+            entity.setId(1L);
+            entity.setTeamId(1L);
+            return entity;//
+        }
+        return account;
     }
 
     @Transactional

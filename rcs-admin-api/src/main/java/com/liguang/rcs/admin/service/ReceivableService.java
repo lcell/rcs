@@ -24,6 +24,7 @@ import com.liguang.rcs.admin.web.receivable.*;
 import com.liguang.rcs.admin.web.writeoff.CommissionFeeSettlementVO;
 import com.liguang.rcs.admin.web.writeoff.WriteOffSettlementVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -249,9 +250,12 @@ public class ReceivableService {
         queryParams.setStatus(params.getContractStatus());
         queryParams.setProductType(params.getProductType());
         queryParams.setSalesName(params.getSalesName());
-        queryParams.setStartDate(params.getBeginDate());
+        queryParams.setTeamId(params.getTeamId());
         queryParams.setType(contractType.getCode());
-        queryParams.setEndDate(DateUtils.toString(Calendar.getInstance().getTime(), "yyyy-MM-dd"));
+        if (Strings.isNotBlank(params.getBeginDate())) {
+            queryParams.setStartDate(params.getBeginDate());
+            queryParams.setEndDate(DateUtils.toString(Calendar.getInstance().getTime(), "yyyy-MM-dd"));
+        }
         return queryParams;
     }
 }

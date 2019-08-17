@@ -2,6 +2,7 @@ package com.liguang.rcs.admin.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.liguang.rcs.admin.common.enumeration.ContractStatusEnum;
 import com.liguang.rcs.admin.common.enumeration.ContractTypeEnum;
 import com.liguang.rcs.admin.common.enumeration.ProductTypeEnum;
 import com.liguang.rcs.admin.common.response.PageableBody;
@@ -90,11 +91,20 @@ public class ContractService {
             if (!Strings.isNullOrEmpty(params.getCustomId())) {
                 conditions.add(cb.equal(root.get("customId"), params.getCustomId()));
             }
+            if (!Strings.isNullOrEmpty(params.getSalesName())) {
+                conditions.add(cb.equal(root.get("salesName"), params.getSalesName()));
+            }
+            if (!Strings.isNullOrEmpty(params.getStatus())) {
+                conditions.add(cb.equal(root.get("status"), EnumUtils.findByCode(ContractStatusEnum.values(), params.getStatus())));
+            }
             if (!Strings.isNullOrEmpty(params.getProductType())) {
                 conditions.add(cb.equal(root.get("productType"), EnumUtils.findByCode(ProductTypeEnum.values(), params.getProductType())));
             }
             if (!Strings.isNullOrEmpty(params.getCustomName())) {
                 conditions.add(cb.equal(root.get("customName"), params.getCustomName()));
+            }
+            if (!Strings.isNullOrEmpty(params.getTeamId()) && NumericUtils.toLong(params.getTeamId()) != null) {
+                conditions.add(cb.equal(root.get("teamId"), NumericUtils.toLong(params.getTeamId())));
             }
             if (!Strings.isNullOrEmpty(params.getStartDate()) && !Strings.isNullOrEmpty(params.getEndDate())) {
                 conditions.add(cb.between(root.get("effectiveDate"),
