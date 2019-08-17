@@ -80,6 +80,14 @@ public class WriteOffService {
         return entityList.stream().map(WriteOffVO::buildFrom).collect(Collectors.toList());
     }
 
+    public List<WriteOffVO> queryWriteOffRecord(String customId) {
+        List<WriteOffEntity> entityList = writeOffRepository.queryByCustom(customId);
+        if (entityList == null || entityList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return entityList.stream().map(WriteOffVO::buildFrom).collect(Collectors.toList());
+    }
+
 
     public Multimap<String, WriteOffEntity> queryWriteOffEntity(Long contractId) {
         Multimap<String, WriteOffEntity> entityMultimap = ArrayListMultimap.create();
@@ -282,5 +290,9 @@ public class WriteOffService {
                 serviceVo.setOverdueAmount(overdueAmount);
             }
         }
+    }
+
+    public boolean hasRelateToContracts(List<Long> contractIdList) {
+        return writeOffRepository.countByContractIds(contractIdList) > 0;
     }
 }

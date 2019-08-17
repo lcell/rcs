@@ -32,8 +32,16 @@ public interface WriteOffRepository extends JpaRepository<WriteOffEntity, Long> 
     void unAllRelationContract(Long contractId, String settlementId);
 
     @Query(value = "select * from rcs_write_off " +
-            "where custom_id = ?1 and payment_date >= ?2 order by payment_date", nativeQuery = true)
+            "where custom_id = ?1 and payment_date >= ?2  order by payment_date DESC ", nativeQuery = true)
     List<WriteOffEntity> queryByCustomAndEffectTime(String customId, Timestamp effectTime);
 
+
+    @Query(value = "select * from rcs_write_off " +
+            "where custom_id = ?1 order by payment_date DESC ", nativeQuery = true)
+    List<WriteOffEntity> queryByCustom(String customId);
+
     List<WriteOffEntity> findByRefContractId(Long contractId);
+
+    @Query(value = "select count(*) from rcs_write_off where ref_contract_id in (?1)", nativeQuery = true)
+    int countByContractIds(List<Long> contractIdList);
 }

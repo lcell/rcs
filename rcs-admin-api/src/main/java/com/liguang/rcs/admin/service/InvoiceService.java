@@ -31,8 +31,13 @@ public class InvoiceService {
      * @param effectDate
      */
     public List<InvoiceVO> queryByCustomAndEffectDate(String customId, Timestamp effectDate) {
-        List<InvoiceEntity> entity = invoiceRepository.findByCustomIdAndBillingDateGreaterThanEqualOrderByBillingDateDesc(customId, effectDate);
+        List<InvoiceEntity> entity = invoiceRepository.findByCustomAndBillingDate(customId, effectDate);
         return entity.stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
+    }
+
+    public List<InvoiceVO> queryByCustomId(String customId) {
+        List<InvoiceEntity> entityList = invoiceRepository.findByCustom(customId);
+        return entityList.stream().map(InvoiceVO::buildFrom).collect(Collectors.toList());
     }
 
     /**
@@ -87,5 +92,9 @@ public class InvoiceService {
 
     public void saveInvoice(InvoiceEntity toEntity) {
         this.invoiceRepository.save(toEntity);
+    }
+
+    public boolean hasRelateToContracts(List<Long> contractIdList) {
+       return invoiceRepository.countByContractIds(contractIdList) > 0;
     }
 }

@@ -103,4 +103,8 @@ public class ContractService {
             return cb.and(conditions.toArray(new Predicate[conditions.size()]));
         };
     }
+
+    public void deleteByIds(List<Long> contractIds) {
+        contractRepository.deleteByIds(contractIds);
+    }
 }

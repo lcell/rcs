@@ -6,7 +6,11 @@ import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.db.domain.AccountEntity;
 import com.liguang.rcs.admin.service.AccountService;
 import com.liguang.rcs.admin.service.ContractService;
+import com.liguang.rcs.admin.service.InvoiceService;
+import com.liguang.rcs.admin.service.WriteOffService;
+import com.liguang.rcs.admin.util.CollectionUtils;
 import com.liguang.rcs.admin.util.NumericUtils;
+import com.liguang.rcs.admin.util.ResponseCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/rcs/contract")
 @RestController
@@ -29,6 +35,11 @@ public class ContractController  {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private InvoiceService invoiceService;
+
+    @Autowired
+    private WriteOffService writeOffService;
     @PostMapping("/query")
     @ApiOperation("查询合同列表")
     public ResponseObject<PageableBody<ContractVO>> query(@RequestBody QueryParams params) {
@@ -90,6 +101,28 @@ public class ContractController  {
             contractService.createContract(contract, entity);
             return ResponseObject.success();
         } catch (Exception ex) {
+            log.error("Exception:{}", ex);
+            return ResponseObject.serious();
+        }
+    }
+
+    @ApiOperation("批量删除合同")
+    @PostMapping("/delete")
+    @ApiImplicitParam(name = "contractIds", value = "合同ID集合", type = "List<String>")
+    public ResponseObject<Void> delete(@RequestBody DeleteParams params) {
+        if (params == null || CollectionUtils.isEmpty(params.getContractIds())) {
+            return ResponseObject.success();
+        }
+        try {
+            List<Long> contractIdList =  params.getContractIds().stream().map(Long::parseLong).collect(Collectors.toList());
+            if(invoiceService.hasRelateToContracts(contractIdList)
+                    || writeOffService.hasRelateToContracts(contractIdList)) {
+                return ResponseObject.fail(ResponseCode.DELETE_CONTRACT_FAIL);
+            }
+            contractService.deleteByIds(contractIdList);
+            return ResponseObject.success();
+        } catch (Exception ex) {
+            log.error("Exception:{}", ex);
             return ResponseObject.serious();
         }
     }

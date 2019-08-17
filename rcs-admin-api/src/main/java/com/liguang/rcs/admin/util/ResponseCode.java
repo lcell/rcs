@@ -8,6 +8,9 @@ public enum  ResponseCode {
     TEAM_DELETE_FAIL("701", "需要解散其所有子团队"),
 
 
+    DELETE_CONTRACT_FAIL("801", "先取消合同关联的发票和核销后才能删除"),
+
+
     BAD_ARGUMENT("401", "参数不对"),
     BAD_ARGUMENT_VALUE("402", "参数值不对"),
     NOT_EXIST("404", "数据不存在"),

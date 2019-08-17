@@ -71,14 +71,18 @@ public class WriteOffController {
     public ResponseObject<List<WriteOffVO>> queryWriteOffRecord(@RequestBody QueryWriteOffParams params) {
         Timestamp effectTime;
         if (params == null
-                || (effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyy-MM-dd")) == null
-                || Strings.isNullOrEmpty(params.getEffectDate())
                 ||  NumericUtils.toLong(params.getContractId()) == null) {
             log.error("[WriteOff] query params is invalid, params:{}", params);
             return ResponseObject.badArgumentValue();
         }
-        return ResponseObject.success(writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime)
-                .stream()
+        List<WriteOffVO> writeOffVOS;
+        if (Strings.isNullOrEmpty(params.getEffectDate())) {
+            writeOffVOS = writeOffService.queryWriteOffRecord(params.getCustomId());
+        } else {
+            effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyy-MM-dd");
+            writeOffVOS = writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime);
+        }
+        return ResponseObject.success(writeOffVOS.stream()
                 .filter(record -> Strings.isNullOrEmpty(record.getContractId()) ||
                         (record.getContractId().equals(params.getContractId()) //关联的合同和当前相同
 //                                && record.getType().equals(params.getWriteOffType()) //关联的合同类型和当前相同

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/rcs/invoice")
 @Api(tags = "发票管理API")
@@ -24,23 +25,27 @@ public class InvoiceController {
     private InvoiceService invoiceService;
 
     @ApiOperation("根据客户ID和合同生效时间查询发票列表")
-    @GetMapping("/queryByCustomIdAndEffectTime")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "customId", type = "String", value = "客户ID", required = true),
-                    @ApiImplicitParam(name = "effectDate", type = "String", value = "合同生效时间,格式yyyy-MM-dd", required = true)
-            }
-    )
-    public ResponseObject<List<InvoiceVO>> queryByCustomIdAndEffectTime(
-            @RequestParam(value = "customId") String customId,
-            @RequestParam(value = "effectDate") String effectDate) {
-        if (Strings.isNullOrEmpty(customId) || Strings.isNullOrEmpty(effectDate)) {
-            log.error("[Invoice] customId or effectDate is empty.");
+    @GetMapping("/queryInvoice")
+    public ResponseObject<List<InvoiceVO>> queryInvoice( @Valid @RequestBody QueryInvoiceParam params) {
+        if (params == null
+                || Strings.isNullOrEmpty(params.getCustomId())
+                || Strings.isNullOrEmpty(params.getContractId())) {
+            log.error("[Invoice] customId  is empty.");
             return ResponseObject.badArgumentValue();
         }
         try {
-            Timestamp timestamp = DateUtils.toTimestamp(effectDate, "yyyy-MM-dd");
-            return ResponseObject.success(invoiceService.queryByCustomAndEffectDate(customId, timestamp));
+            List<InvoiceVO> invoiceList;
+            if (Strings.isNullOrEmpty(params.getEffectDate())) {
+                invoiceList = invoiceService.queryByCustomId(params.getCustomId());
+            } else {
+                Timestamp timestamp = DateUtils.toTimestamp(params.getEffectDate(), "yyyy-MM-dd");
+                invoiceList = invoiceService.queryByCustomAndEffectDate(params.getCustomId(), timestamp);
+            }
+
+            return ResponseObject.success(invoiceList.stream()
+                    .filter(invoiceVO -> Strings.isNullOrEmpty(invoiceVO.getContractId())
+                            || invoiceVO.getContractId().equals(params.getContractId()))
+            .collect(Collectors.toList()));
         } catch (Exception ex) {
             log.error("[Invoice] query fail, Exception:{}", ex);
             return ResponseObject.badArgumentValue();

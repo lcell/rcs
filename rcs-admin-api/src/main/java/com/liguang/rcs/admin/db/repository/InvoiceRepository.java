@@ -10,7 +10,15 @@ import java.util.List;
 
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
 
-    List<InvoiceEntity> findByCustomIdAndBillingDateGreaterThanEqualOrderByBillingDateDesc(String customId, Timestamp billingDate);
+    @Query(value = "select * from rcs_invoice " +
+            "where custom_id= ?1 and billing_date >= ?2 order by billing_date desc", nativeQuery = true)
+
+    List<InvoiceEntity> findByCustomAndBillingDate(String customId, Timestamp billingDate);
+
+
+    @Query(value = "select * from rcs_invoice " +
+            "where custom_id= ?1 order by billing_date desc", nativeQuery = true)
+    List<InvoiceEntity> findByCustom(String customId);
 
     @Modifying
     @Query(value = "update rcs_invoice set contract_id = ?1 " +
@@ -23,4 +31,7 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long> {
     void unRelationToContract(long contractId, List<Long> invoiceIds);
 
     List<InvoiceEntity> findByContractIdOrderByBillingDate(Long contractId);
+
+    @Query(value = "select count(*) from rcs_invoice where contract_id in (?1)", nativeQuery = true)
+    int countByContractIds(List<Long> contractIdList);
 }
