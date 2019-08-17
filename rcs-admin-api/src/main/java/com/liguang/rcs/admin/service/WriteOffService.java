@@ -183,13 +183,13 @@ public class WriteOffService {
             vo.setActualPayDate(DateUtils.toString(payDay, "yyyyMMdd"));
             vo.setActualPayAmount(totalActualPay);
         } finally {
-            OverdueDateEnum overdueType;
+            OverdueDateEnum overdueType = DAY0;
             Double overdueAmount;
             //计算逾期
             if ((overdueAmount = minus(vo.getPlanPayAmount(), vo.getActualPayAmount())) > 0) {
                 int deltaMonth = DateUtils.dateMinusForMonth(Calendar.getInstance().getTime(), vo.getPayMonth(), "yyyyMM");
                 overdueType = OverdueDateEnum.convertToEnumByMonth(deltaMonth);
-            } else {
+            } else if(payDay != null){
                 int deltaMonth = DateUtils.dateMinusForMonth(DateUtils.toDate(payDay), vo.getPayMonth(), "yyyyMM");
                 overdueType = OverdueDateEnum.convertToEnumByMonth(deltaMonth);
             }
