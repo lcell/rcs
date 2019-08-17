@@ -14,6 +14,7 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long>,
         JpaSpecificationExecutor<ContractEntity> {
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE  rcs_contract SET effective_date = ?1 where id = ?2", nativeQuery = true)
     void updateffectTime(Timestamp effectTime, Long id);
 

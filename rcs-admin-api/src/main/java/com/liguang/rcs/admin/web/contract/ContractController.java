@@ -58,7 +58,7 @@ public class ContractController  {
             @ApiImplicitParam(name = "contractId", value = "合同ID", dataType = "String")
     )
     public ResponseObject<ContractVO> query(@PathVariable("contractId") String contractId) {
-        Long contractIdLong = null;
+        Long contractIdLong;
         if (Strings.isNullOrEmpty(contractId) || (contractIdLong = NumericUtils.toLong(contractId)) == null) {
             log.warn("[Contract] contract ID can't be empty.");
             return ResponseObject.badArgumentValue();
@@ -91,7 +91,7 @@ public class ContractController  {
     @ApiOperation("修改合同")
     @PostMapping("/modify")
     public ResponseObject<Void> modify(@Valid @RequestBody ContractVO contract) {
-        AccountEntity entity = null;
+        AccountEntity entity;
         if (contract == null || Strings.isNullOrEmpty(contract.getContractId()) ||
                 (entity = accountService.queryByNo(contract.getSalesNo())) == null) {
             log.error("[Contract] input is invalid, input:{}", contract);

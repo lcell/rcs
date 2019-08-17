@@ -47,10 +47,10 @@ public class ContractVO {
     @NotNull(message = "合同总金额不可为空")
     private String totalAmount;
 
-//    @ApiModelProperty(value = "合同生效日期 yyyyMMdd", required = true, dataType = "String")
-//    @CopyProperty(targetField = "effectiveDate", typeCovertClass = StringToTimestampConverter.class, extMsg = "yyyyMMdd")
+    @ApiModelProperty(value = "合同生效日期 yyyyMMdd", required = true, dataType = "String")
+    @CopyProperty(targetField = "effectiveDate", typeCovertClass = StringToTimestampConverter.class, extMsg = "yyyyMMdd")
 //    @NotNull(message = "合同生效日期不可为空")
-//    private String effectiveDate;
+    private String effectiveDate;
 
     @ApiModelProperty(value = "合同状态 0-normal 1-legal 2-3rd party", required = true, dataType = "String")
     @CopyProperty(targetField = "status", typeCovertClass = StringToIEnumConverter.class, extClass= ContractStatusEnum.class)

@@ -9,7 +9,7 @@ public interface WriteOffCommon {
 
     /**
      * 是否结清
-     * @return 应付-实际支付
+     * @return 应付-实际 <=0 支付
      */
     boolean cleanUpFlag();
 

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ContractService {
-    private static final String CONTRACT__PREFIX_FILE_PATH = "/contract/";
 
     @Autowired
     private ContractRepository contractRepository;
@@ -94,12 +93,14 @@ public class ContractService {
             if (!Strings.isNullOrEmpty(params.getProductType())) {
                 conditions.add(cb.equal(root.get("productType"), EnumUtils.findByCode(ProductTypeEnum.values(), params.getProductType())));
             }
+            if (!Strings.isNullOrEmpty(params.getCustomName())) {
+                conditions.add(cb.equal(root.get("customName"), params.getCustomName()));
+            }
             if (!Strings.isNullOrEmpty(params.getStartDate()) && !Strings.isNullOrEmpty(params.getEndDate())) {
                 conditions.add(cb.between(root.get("effectiveDate"),
                         DateUtils.softToTimestamp(params.getStartDate(), "yyyy-MM-dd"),
                         DateUtils.softToTimestamp(params.getEndDate(), "yyyy-MM-dd")));
             }
-
             return cb.and(conditions.toArray(new Predicate[conditions.size()]));
         };
     }
