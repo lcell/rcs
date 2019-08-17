@@ -16,5 +16,5 @@ public class QueryInvoiceParam {
     @NotBlank(message = "合同ID不可为空")
     private String contractId;
     @ApiModelProperty(value = "生效时间 yyyy-MM-dd", dataType = "String")
-    private String effectDate;
+    private String effectiveDate;
 }

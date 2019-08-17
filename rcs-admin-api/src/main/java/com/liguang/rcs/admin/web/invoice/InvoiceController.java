@@ -25,7 +25,7 @@ public class InvoiceController {
     private InvoiceService invoiceService;
 
     @ApiOperation("根据客户ID和合同生效时间查询发票列表")
-    @GetMapping("/queryInvoice")
+    @PostMapping("/queryInvoice")
     public ResponseObject<List<InvoiceVO>> queryInvoice( @Valid @RequestBody QueryInvoiceParam params) {
         if (params == null
                 || Strings.isNullOrEmpty(params.getCustomId())
@@ -35,10 +35,10 @@ public class InvoiceController {
         }
         try {
             List<InvoiceVO> invoiceList;
-            if (Strings.isNullOrEmpty(params.getEffectDate())) {
+            if (Strings.isNullOrEmpty(params.getEffectiveDate())) {
                 invoiceList = invoiceService.queryByCustomId(params.getCustomId());
             } else {
-                Timestamp timestamp = DateUtils.toTimestamp(params.getEffectDate(), "yyyy-MM-dd");
+                Timestamp timestamp = DateUtils.toTimestamp(params.getEffectiveDate(), "yyyy-MM-dd");
                 invoiceList = invoiceService.queryByCustomAndEffectDate(params.getCustomId(), timestamp);
             }
 
