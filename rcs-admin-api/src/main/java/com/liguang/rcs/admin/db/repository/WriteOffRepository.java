@@ -28,7 +28,7 @@ public interface WriteOffRepository extends JpaRepository<WriteOffEntity, Long> 
     @Modifying
     @Query(value = "update rcs_write_off " +
             "set ref_contract_id = null, settlement_id = null " +
-            " where ref_contract_id = ?1 and settlement_id = ?3 ", nativeQuery = true)
+            " where ref_contract_id = ?1 and settlement_id = ?2 ", nativeQuery = true)
     void unAllRelationContract(Long contractId, String settlementId);
 
     @Query(value = "select * from rcs_write_off " +

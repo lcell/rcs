@@ -23,7 +23,7 @@ public abstract class AbstractNumberStringConverter {
             return NumericUtils.toLong(source);
         }
         if (type.isAssignableFrom(Double.class)) {
-            return NumericUtils.toDouble(source);
+            return NumericUtils.formatDouble(NumericUtils.toDouble(source), 2);
         }
         throw new NotSupportConverterException();
     }

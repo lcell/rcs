@@ -76,10 +76,10 @@ public class WriteOffController {
             return ResponseObject.badArgumentValue();
         }
         List<WriteOffVO> writeOffVOS;
-        if (Strings.isNullOrEmpty(params.getEffectDate())) {
+        if (Strings.isNullOrEmpty(params.getEffectiveDate())) {
             writeOffVOS = writeOffService.queryWriteOffRecord(params.getCustomId());
         } else {
-            effectTime = DateUtils.softToTimestamp(params.getEffectDate(), "yyyy-MM-dd");
+            effectTime = DateUtils.softToTimestamp(params.getEffectiveDate(), "yyyy-MM-dd");
             writeOffVOS = writeOffService.queryWriteOffRecord(params.getCustomId(), effectTime);
         }
         return ResponseObject.success(writeOffVOS.stream()

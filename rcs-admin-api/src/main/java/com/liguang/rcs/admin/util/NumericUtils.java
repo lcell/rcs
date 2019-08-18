@@ -80,7 +80,10 @@ public class NumericUtils {
     }
 
     public static Double div(Double double1, Double double2) {
-        if (double2 == 0) {
+        if (isNullOrZero(double1)) {
+            return 0D;
+        }
+        if (isNullOrZero(double2)) {
             return 1D;
         }
         return formatDouble(double1 / double2, 2);
