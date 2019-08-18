@@ -250,8 +250,9 @@ public class ReceivableService {
         queryParams.setStatus(params.getContractStatus());
         queryParams.setProductType(params.getProductType());
         queryParams.setSalesName(params.getSalesName());
-        queryParams.setTeamId(params.getTeamId());
-        queryParams.setType(contractType.getCode());
+        if (contractType != null) {
+            queryParams.setType(contractType.getCode());
+        }
         if (Strings.isNotBlank(params.getBeginDate())) {
             queryParams.setStartDate(params.getBeginDate());
             queryParams.setEndDate(DateUtils.toString(Calendar.getInstance().getTime(), "yyyy-MM-dd"));
