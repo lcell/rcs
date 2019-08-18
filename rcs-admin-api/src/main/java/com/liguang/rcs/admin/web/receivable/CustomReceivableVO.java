@@ -2,6 +2,7 @@ package com.liguang.rcs.admin.web.receivable;
 
 import com.liguang.rcs.admin.common.copy.BeanUtils;
 import com.liguang.rcs.admin.common.copy.CopyProperty;
+import com.liguang.rcs.admin.common.copy.EnableCopyProperties;
 import com.liguang.rcs.admin.common.copy.converter.StringToNumberConverter;
 import com.liguang.rcs.admin.db.domain.UnAppliedCashEntity;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import static com.liguang.rcs.admin.util.NumericUtils.minus;
 @ApiModel("客户应收硬件分期")
 @Data
 @Slf4j
+@EnableCopyProperties(copyParent = true)
 public class CustomReceivableVO extends TableCommonColumn implements Cloneable {
     @ApiModelProperty(value = "手动调整ID， 用于更新", dataType = "Long")
     @CopyProperty
