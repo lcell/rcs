@@ -3,6 +3,7 @@ package com.liguang.rcs.admin.service;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.liguang.rcs.admin.cache.WriteOffCacheService;
 import com.liguang.rcs.admin.common.enumeration.OverdueDateEnum;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
@@ -34,6 +35,8 @@ import static com.liguang.rcs.admin.util.NumericUtils.plus;
 @Slf4j
 @Service
 public class WriteOffService {
+    @Autowired
+    private WriteOffCacheService cacheService;
 
     @Autowired
     private WriteOffRepository writeOffRepository;
@@ -47,16 +50,22 @@ public class WriteOffService {
 
     @Transactional
     public void relationContract(ContractEntity contract, List<Long> writeOffIds, String settlementId) {
+        //删除缓存
+        cacheService.removeCache(contract.getId());
         writeOffRepository.relationContract(contract.getId(), settlementId, writeOffIds);
     }
 
     @Transactional
     public void unRelationContract(ContractEntity contract, List<Long> writeOffIds, String settlementId) {
+        //删除缓存
+        cacheService.removeCache(contract.getId());
         writeOffRepository.unRelationContract(contract.getId(), settlementId, writeOffIds);
     }
 
 
     public void unAllRelationContract(ContractEntity contract, String settlementId) {
+        //删除缓存
+        cacheService.removeCache(contract.getId());
         writeOffRepository.unAllRelationContract(contract.getId(), settlementId);
     }
 
@@ -107,6 +116,10 @@ public class WriteOffService {
     //                剩余发票金额 = 发票金额 - 合同当前金额；
     //2. settlementId 生成规则 0，1，2，3，4，5，6 ...
     public List<WriteOffSettlementVO> querySettlement(ContractEntity contract) throws BaseException {
+        List<WriteOffSettlementVO> voList = cacheService.getFromCatch(contract.getId());
+        if (voList != null) {
+            return voList;
+        }
 
         List<InvoiceEntity> invoiceList = invoiceService.queryRelatedEntityList(contract.getId());
         if (invoiceList == null || invoiceList.isEmpty()) {
@@ -142,6 +155,7 @@ public class WriteOffService {
             vo.setReceivableReasonable(totalInvoiceAmount);
             settlementList.add(vo);
         }
+        cacheService.addToCache(contract.getId(), settlementList);
         return settlementList;
     }
 
@@ -228,6 +242,11 @@ public class WriteOffService {
      * @return
      */
     public List<CommissionFeeSettlementVO> queryCommissionByContractId(ContractEntity contract) throws BaseException {
+        List<CommissionFeeSettlementVO> voList = cacheService.getFromCatch(contract.getId());
+        if (voList != null) {
+            return voList;
+        }
+
         List<InvoiceEntity> entityList = invoiceService.queryRelatedEntityList(contract.getId());
         if (entityList == null || entityList.isEmpty()) {
             return Collections.emptyList();
@@ -252,6 +271,7 @@ public class WriteOffService {
                 vo.setAccumulatedPayAmount(actualPayTotal);
                 result.add(vo);
             }
+            cacheService.addToCache(contract.getId(), result);
             return result;
         } catch (Exception e) {
             log.error("[WriteOff] Inner Err, Exception:{}", e);

@@ -1,5 +1,6 @@
 package com.liguang.rcs.admin.service;
 
+import com.liguang.rcs.admin.cache.WriteOffCacheService;
 import com.liguang.rcs.admin.db.domain.InvoiceEntity;
 import com.liguang.rcs.admin.db.repository.InvoiceRepository;
 import com.liguang.rcs.admin.exception.BaseException;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class InvoiceService {
+
+    @Autowired
+    private WriteOffCacheService cacheService;
 
     @Autowired
     private InvoiceRepository invoiceRepository;
@@ -52,11 +56,13 @@ public class InvoiceService {
             log.error("[Invoice] contract not exist, contractId:{}", contractId);
             throw new BaseException(ResponseCode.NOT_EXIST);
         }
+        cacheService.removeCache(contractId);
         invoiceRepository.relationToContract(contractId, invoiceIds);
     }
 
     @Transactional
     public void unRelationToContract(long contractId, List<Long> invoiceIds) throws BaseException {
+        cacheService.removeCache(contractId);
         ContractVO contract = contractService.queryById(contractId);
         if (contract == null) {
             log.error("[Invoice] contract not exist, contractId:{}", contractId);
