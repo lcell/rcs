@@ -20,7 +20,11 @@ public class WriteOffCacheService {
     }
 
     public <T> List<T> getFromCatch(Long contractId) {
-        return Lists.newArrayList((List<T>)settlementCache.getIfPresent(contractId));
+        List<T> data = (List<T>)settlementCache.getIfPresent(contractId);
+        if (data == null) {
+            return null;
+        }
+        return Lists.newArrayList(data);
     }
 
     public void removeCache(Long contractId) {
