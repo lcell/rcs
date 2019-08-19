@@ -49,7 +49,7 @@ public class TableCommonColumn  implements Cloneable {
     @ApiModelProperty(value = "逾期总额", dataType = "Double")
     @CopyProperty
     private Double overdueTotal;
-    @ApiModelProperty(value = "本期合计, 实际支付 + 逾期 + 未逾期", dataType = "Double")
+    @ApiModelProperty(value = "本期总额, 实际支付 + 逾期 + 未逾期", dataType = "Double")
     @CopyProperty
     private Double total;
 

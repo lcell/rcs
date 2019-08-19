@@ -17,7 +17,7 @@ public class CustomServiceConverter extends AbstractCommonConverter implements C
             vo.setNPer(key);
         }
         //本期合计为 本期应收
-        vo.setReceivablePayment(plus(data.getPayAmount(), vo.getReceivablePayment()));
+        vo.setReceivablePayment(plus(minus(data.getPayAmount(), vo.getActualPayment()), vo.getReceivablePayment()));
 
         vo.setActualPayment(plus(data.getActualPayAmount(), vo.getActualPayment()));
         vo.setTotal(plus(data.getPayAmount(), vo.getTotal()));
@@ -26,8 +26,8 @@ public class CustomServiceConverter extends AbstractCommonConverter implements C
         }
         //设置逾期统计
         buildOverdueTotal(vo);
-        //未逾期的计算方式 合计应收-实际支付 - 逾期金额
-        vo.setUnOverdueAmount(minus(vo.getReceivablePayment() , vo.getActualPayment(), vo.getOverdueTotal()));
+        //未逾期的计算方式 合计应收 - 逾期金额
+        vo.setUnOverdueAmount(minus(vo.getReceivablePayment() , vo.getOverdueTotal()));
         return vo;
     }
 }

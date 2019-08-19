@@ -261,11 +261,11 @@ public class WriteOffService {
 
     //FIXME 后续可以考虑将它和分期的计算合并在一起
     private void setActualPayInfo(CommissionFeeSettlementVO serviceVo, Collection<WriteOffEntity> writeOffEntities) throws ParseException {
-        if (writeOffEntities == null || writeOffEntities.isEmpty()) {
-            return;
-        }
         Timestamp payDay = null;
         try {
+            if (writeOffEntities == null || writeOffEntities.isEmpty()) {
+                return;
+            }
             Double totalActualPay = 0d;
             for(WriteOffEntity entity : writeOffEntities) {
                 totalActualPay = plus(totalActualPay, entity.getPaymentAmount());

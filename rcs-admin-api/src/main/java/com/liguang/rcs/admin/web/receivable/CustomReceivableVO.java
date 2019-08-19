@@ -26,10 +26,10 @@ public class CustomReceivableVO extends TableCommonColumn implements Cloneable {
     @CopyProperty(targetField = "refContractId", typeCovertClass = StringToNumberConverter.class, extClass = Long.class)
     @NotNull(message = "合同ID不可为空")
     private String contractId;
-    @ApiModelProperty(value = "应收款合计, 本期总计",dataType = "String")
+    @ApiModelProperty(value = "应收款合计, 本期总计",dataType = "Double")
     @CopyProperty(targetField = "receivableAmount")
     private Double receivablePayment;
-    @ApiModelProperty(value = "实际到账金额",dataType = "String")
+    @ApiModelProperty(value = "实际到账金额",dataType = "Double")
     @CopyProperty(targetField = "actualPayAmount")
     private Double actualPayment;
 
