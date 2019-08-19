@@ -281,7 +281,7 @@ public class WriteOffService {
             if (serviceVo.getReceivableReasonable() > 0) {
                 long deltaDay = DateUtils.dateMinusToNow(serviceVo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
-            } else {
+            } else if (payDay != null){
                 long deltaDay = DateUtils.dateMinus(DateUtils.toString(payDay, "yyyyMMdd"),  serviceVo.getPayDate(), "yyyyMMdd") - 30;
                 overdueType = OverdueDateEnum.convertToEnum(deltaDay);
             }
