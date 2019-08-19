@@ -54,7 +54,7 @@ public class WriteOffController {
             log.error("[WriteOff] contract not exist, contractId:{}", contractId);
             return ResponseObject.dataNotExist();
         }
-        if (contract.getType() == ContractTypeEnum.HARDWARE) {
+        if (contract.getType() != ContractTypeEnum.HARDWARE) {
             return ResponseObject.fail(CONTRACT_TYPE_INVALID);
         }
         try {
@@ -227,7 +227,7 @@ public class WriteOffController {
             log.error("[WriteOff] contract not exist, contractId:{}", contractId);
             return ResponseObject.dataNotExist();
         }
-        if (contract.getType() == ContractTypeEnum.SERVICE) {
+        if (contract.getType() != ContractTypeEnum.SERVICE) {
             return ResponseObject.fail(CONTRACT_TYPE_INVALID);
         }
         try {
