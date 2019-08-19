@@ -9,6 +9,7 @@ public enum  ResponseCode {
 
 
     DELETE_CONTRACT_FAIL("801", "先取消合同关联的发票和核销后才能删除"),
+    CONTRACT_TYPE_INVALID("802", "合同类型不正确"),
 
 
     BAD_ARGUMENT("401", "参数不对"),

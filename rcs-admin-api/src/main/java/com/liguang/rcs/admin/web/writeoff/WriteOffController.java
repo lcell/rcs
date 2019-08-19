@@ -3,6 +3,7 @@ package com.liguang.rcs.admin.web.writeoff;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.liguang.rcs.admin.common.enumeration.ActionPlanEnum;
+import com.liguang.rcs.admin.common.enumeration.ContractTypeEnum;
 import com.liguang.rcs.admin.common.response.ResponseObject;
 import com.liguang.rcs.admin.db.domain.ContractEntity;
 import com.liguang.rcs.admin.exception.BaseException;
@@ -25,6 +26,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.liguang.rcs.admin.util.ResponseCode.CONTRACT_TYPE_INVALID;
+
 @Api(tags = "核销管理API")
 @RestController
 @RequestMapping("/rcs/writeOff")
@@ -44,12 +47,15 @@ public class WriteOffController {
     )
     @GetMapping("/querySettlementByContractId/{contractId}")
     public ResponseObject<QuerySettlementOutput> querySettlementByContractId(@PathVariable("contractId") String contractId) {
-        Long contractIdLong = null;
-        ContractEntity contract = null;
+        Long contractIdLong;
+        ContractEntity contract;
         if ((contractIdLong = NumericUtils.toLong(contractId)) == null
                 || (contract = contractService.queryEntityById(contractIdLong)) == null) {
             log.error("[WriteOff] contract not exist, contractId:{}", contractId);
             return ResponseObject.dataNotExist();
+        }
+        if (contract.getType() == ContractTypeEnum.SERVICE) {
+            return ResponseObject.fail(CONTRACT_TYPE_INVALID);
         }
         try {
             QuerySettlementOutput output = new QuerySettlementOutput();
@@ -214,12 +220,15 @@ public class WriteOffController {
     )
     @GetMapping("/queryCommissionByContractId/{contractId}")
     public ResponseObject<QueryCommissionFeeSettlementOutput> queryCommissionByContractId(@PathVariable("contractId") String contractId) {
-        Long contractIdLong = null;
-        ContractEntity contract = null;
+        Long contractIdLong;
+        ContractEntity contract;
         if ((contractIdLong = NumericUtils.toLong(contractId)) == null
                 || (contract = contractService.queryEntityById(contractIdLong)) == null) {
             log.error("[WriteOff] contract not exist, contractId:{}", contractId);
             return ResponseObject.dataNotExist();
+        }
+        if (contract.getType() == ContractTypeEnum.SERVICE) {
+            return ResponseObject.fail(CONTRACT_TYPE_INVALID);
         }
         try {
             QueryCommissionFeeSettlementOutput output = new QueryCommissionFeeSettlementOutput();
