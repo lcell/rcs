@@ -107,29 +107,32 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-            <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <container>
-                        <jvmFlags>
-                            <jvmFlag>-Xms512m</jvmFlag>
-                        </jvmFlags>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <useCurrentTimestamp>true</useCurrentTimestamp>
-                    </container>
-                    <from>
-                        <image>openjdk:8u212-jre-slim</image>
-                    </from>
-                    <to>
-                        <image>rcs-demo:${project.version}</image>
-                    </to>
-                    <allowInsecureRegistries>true</allowInsecureRegistries>
-                    <!--<extraDirectory>${project.basedir}/src/main/jib</extraDirectory>-->
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!--plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.10</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>rcs/rcs-server</repository>
+					<tag>v0.1</tag>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin-->
 		</plugins>
 	</build>
 
